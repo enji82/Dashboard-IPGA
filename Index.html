@@ -1,0 +1,2825 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Eksekutif Ijin Penggunaan Gelar Akademik (IPGA) - Disdikbud Kab. Magelang</title>
+
+  <!-- Google Font: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 & Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <!-- SheetJS (xlsx) CDN untuk Ekspor Excel (.xlsx) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <!-- ExcelJS CDN untuk Ekspor Gambar Grafik ke Sheet Excel (.xlsx) -->
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+
+  <style>
+:root {
+  --primary-color: #1e3a8a;
+  --primary-light: #2563eb;
+  --primary-subtle: #dbeafe;
+  --bg-color: #f1f5f9;
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  
+  --status-ms: #10b981;
+  --status-revisi: #f59e0b;
+  --status-tms: #ef4444;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  margin: 0;
+  padding: 0;
+}
+
+.app-header {
+  background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+  color: white;
+  padding: 1.25rem 0;
+  box-shadow: 0 4px 15px -3px rgba(15, 23, 42, 0.2);
+}
+
+.brand-badge {
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Selector Periode Cepat */
+.period-control-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  padding: 1rem 1.25rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+}
+
+/* KPI Cards Dinamis & Responsif */
+.kpi-card {
+  background: var(--card-bg);
+  border-radius: clamp(10px, 1.8vw, 16px);
+  padding: clamp(0.6rem, 1.4vw, 1.15rem);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.08);
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: clamp(3px, 0.5vw, 5px);
+  height: 100%;
+}
+
+.kpi-total::before { background: #2563eb; }
+.kpi-approve::before { background: #10b981; }
+.kpi-revisidikirim::before { background: #0ea5e9; }
+.kpi-revisi::before { background: #f59e0b; }
+.kpi-belumdicek::before { background: #64748b; }
+.kpi-ditolak::before { background: #ef4444; }
+.kpi-sisulka::before { background: #8b5cf6; }
+
+.kpi-label {
+  font-size: clamp(0.68rem, 1.1vw, 0.825rem);
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.kpi-val {
+  font-size: clamp(1.15rem, 2.3vw, 1.75rem);
+  font-weight: 800;
+  line-height: 1.2;
+  margin-top: clamp(0.15rem, 0.4vw, 0.35rem);
+  margin-bottom: 0;
+}
+
+.kpi-sub {
+  font-size: clamp(0.62rem, 0.9vw, 0.75rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: clamp(0.1rem, 0.3vw, 0.25rem);
+  line-height: 1.2;
+}
+
+.kpi-icon {
+  width: clamp(32px, 3.2vw, 44px);
+  height: clamp(32px, 3.2vw, 44px);
+  border-radius: clamp(8px, 1vw, 12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(0.95rem, 1.5vw, 1.3rem);
+  flex-shrink: 0;
+  margin-left: 0.35rem;
+}
+
+.icon-total { background: #eff6ff; color: #2563eb; }
+.icon-approve { background: #ecfdf5; color: #059669; }
+.icon-revisidikirim { background: #f0f9ff; color: #0284c7; }
+.icon-revisi { background: #fffbeb; color: #d97706; }
+.icon-belumdicek { background: #f1f5f9; color: #475569; }
+.icon-ditolak { background: #fef2f2; color: #dc2626; }
+.icon-sisulka { background: #f5f3ff; color: #7c3aed; }
+
+/* Responsif breakpoint untuk mobile & tablet */
+@media (max-width: 768px) {
+  .kpi-card {
+    padding: 0.65rem 0.75rem;
+  }
+  .kpi-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .kpi-card {
+    padding: 0.55rem 0.65rem;
+  }
+  .kpi-val {
+    font-size: 1.25rem;
+  }
+  .kpi-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 0.95rem;
+    border-radius: 8px;
+  }
+}
+
+/* Dashboard Cards */
+.dashboard-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+  height: 100%;
+}
+
+.card-title-custom {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Tabel Matriks Rekapitulasi & Tabel Bulan */
+.table-matrix {
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.85rem;
+  border-left: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+}
+
+.table-matrix th {
+  background-color: #f8fafc;
+  color: #334155;
+  font-weight: 700;
+  padding: 0.4rem 0.55rem;
+  font-size: 0.8rem;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 2px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.table-matrix td {
+  padding: 0.45rem 0.65rem;
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+
+.table-matrix tr:hover td {
+  background-color: #f8fafc;
+}
+
+/* Freeze Header Tabel (Sticky Top 2-Tier Header) */
+.table-matrix thead tr:first-child th {
+  position: sticky;
+  top: 0;
+  background-color: #f8fafc;
+  z-index: 10;
+}
+
+.table-matrix thead tr:nth-child(2) th {
+  position: sticky;
+  top: 29px; /* menempel tepat di bawah baris header pertama */
+  background-color: #f8fafc;
+  z-index: 10;
+}
+
+/* Freeze Kolom Pertama (Kecamatan / Bulan) */
+.table-matrix .freeze-col {
+  position: sticky;
+  left: 0;
+  background-color: #ffffff;
+  z-index: 4;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Sudut Kiri Atas (Pertemuan Header Sticky Top dan Kolom Sticky Left) */
+.table-matrix thead tr:first-child th.freeze-col {
+  position: sticky;
+  top: 0;
+  left: 0;
+  background-color: #f1f5f9;
+  z-index: 20;
+}
+
+.table-matrix tfoot td.freeze-col {
+  background-color: #f1f5f9;
+  z-index: 5;
+}
+
+.table-matrix tbody tr:hover td.freeze-col {
+  background-color: #f1f5f9;
+}
+
+.table-matrix tfoot td {
+  font-weight: 800;
+  background-color: #f1f5f9;
+  border-top: 2px solid #cbd5e1;
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  padding: 0.5rem 0.65rem;
+}
+
+#loadingOverlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.spinner-pulse {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 4px solid #e2e8f0;
+  border-top-color: #1e3a8a;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay">
+    <div class="spinner-pulse mb-3"></div>
+    <div class="fw-bold text-secondary">Memuat Data Dashboard IPGA...</div>
+    <div class="small text-muted">Dinas Pendidikan dan Kebudayaan Kab. Magelang</div>
+  </div>
+
+  <!-- Header Instansi -->
+  <header class="app-header">
+    <div class="container-fluid px-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="bg-white rounded-circle p-2 shadow-sm d-flex align-items-center justify-content-center" style="width: 46px; height: 46px;">
+            <i class="bi bi-bar-chart-line-fill text-primary fs-4"></i>
+          </div>
+          <div>
+            <h1 class="h4 mb-1 fw-bold">Monitoring Ijin Penggunaan Gelar Akademik (IPGA) PNS</h1>
+            <div class="small text-light opacity-75">Dinas Pendidikan dan Kebudayaan Kabupaten Magelang</div>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge bg-white bg-opacity-25 text-white px-3 py-2 small" id="lastUpdatedText">Data memuat...</span>
+          <button class="btn btn-light btn-sm fw-semibold shadow-sm" onclick="refreshData()">
+            <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container-fluid px-4 py-3">
+
+    <!-- Kontrol Periode Utama: Tahun, Bulan, Jenjang, dan Kecamatan -->
+    <div class="period-control-card mb-4">
+      <div class="row g-3 align-items-center">
+        <div class="col-12 col-xl-auto d-flex align-items-center gap-2">
+          <i class="bi bi-calendar3 text-primary fs-4"></i>
+          <div>
+            <div class="fw-bold text-dark text-uppercase small" style="letter-spacing: 0.05em;">Periode &amp; Filter Pemantauan</div>
+            <div class="small text-muted">Saring ringkasan ajuan berdasarkan waktu, jenjang, dan wilayah</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 col-xl ms-xl-auto">
+          <label class="form-label small fw-semibold text-secondary mb-1"><i class="bi bi-calendar-event me-1 text-primary"></i>Tahun Ajuan:</label>
+          <select id="selectTahun" class="form-select form-select-sm fw-bold border-primary">
+            <option value="">Semua Tahun</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-3 col-xl">
+          <label class="form-label small fw-semibold text-secondary mb-1"><i class="bi bi-calendar-month me-1 text-primary"></i>Bulan Ajuan:</label>
+          <select id="selectBulan" class="form-select form-select-sm fw-bold">
+            <option value="">Semua Bulan</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-3 col-xl">
+          <label class="form-label small fw-semibold text-secondary mb-1"><i class="bi bi-mortarboard me-1 text-primary"></i>Jenjang Sekolah:</label>
+          <select id="selectJenjang" class="form-select form-select-sm fw-bold">
+            <option value="">Semua Jenjang</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-3 col-xl">
+          <label class="form-label small fw-semibold text-secondary mb-1"><i class="bi bi-geo-alt me-1 text-primary"></i>Kecamatan:</label>
+          <select id="selectKecamatan" class="form-select form-select-sm fw-bold">
+            <option value="">Semua Kecamatan</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-3 col-xl">
+          <label class="form-label small fw-semibold text-secondary mb-1"><i class="bi bi-briefcase me-1 text-primary"></i>Jenis IPGA:</label>
+          <select id="selectJenisKP" class="form-select form-select-sm fw-bold">
+            <option value="">Semua Jenis IPGA</option>
+            <option value="Fungsional">Fungsional</option>
+            <option value="Reguler">Reguler</option>
+            <option value="PI">PI</option>
+          </select>
+        </div>
+        <div class="col-12 col-xl-auto">
+          <label class="form-label d-none d-xl-block mb-1 small text-transparent">&nbsp;</label>
+          <button class="btn btn-outline-secondary btn-sm w-100" onclick="resetPeriode()">
+            <i class="bi bi-arrow-counterclockwise me-1"></i>Reset Filter
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kartu KPI Ringkasan: Total Ajuan & 6 Kriteria Status Kolom AE (Dinamis & Responsif) -->
+    <div class="row g-2 mb-4">
+      <!-- Total Ajuan -->
+      <div class="col-12 col-sm-6 col-md-3 col-xl">
+        <div class="kpi-card kpi-total">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="overflow-hidden">
+              <div class="kpi-label text-muted">Total Ajuan</div>
+              <h3 class="kpi-val fw-bold" id="kpiTotal">0</h3>
+              <div class="kpi-sub text-muted" id="kpiSubtextTotal">Semua Kriteria</div>
+            </div>
+            <div class="kpi-icon icon-total"><i class="bi bi-files"></i></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Approve -->
+      <div class="col-6 col-sm-4 col-md-3 col-xl">
+        <div class="kpi-card kpi-approve">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="overflow-hidden">
+              <div class="kpi-label text-success">Approve</div>
+              <h3 class="kpi-val fw-bold text-success" id="kpiApprove">0</h3>
+              <div class="kpi-sub text-success fw-semibold" id="kpiSubtextApprove">0%</div>
+            </div>
+            <div class="kpi-icon icon-approve"><i class="bi bi-check2-circle"></i></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Revisi Dikirim -->
+      <div class="col-6 col-sm-4 col-md-3 col-xl">
+        <div class="kpi-card kpi-revisidikirim">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="overflow-hidden">
+              <div class="kpi-label text-info-emphasis">Revisi Dikirim</div>
+              <h3 class="kpi-val fw-bold text-info-emphasis" id="kpiRevisiDikirim">0</h3>
+              <div class="kpi-sub text-info-emphasis fw-semibold" id="kpiSubtextRevisiDikirim">0%</div>
+            </div>
+            <div class="kpi-icon icon-revisidikirim"><i class="bi bi-send-check"></i></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Revisi -->
+      <div class="col-6 col-sm-4 col-md-3 col-xl">
+        <div class="kpi-card kpi-revisi">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="overflow-hidden">
+              <div class="kpi-label text-warning-emphasis">Revisi</div>
+              <h3 class="kpi-val fw-bold text-warning" id="kpiRevisi">0</h3>
+              <div class="kpi-sub text-warning-emphasis fw-semibold" id="kpiSubtextRevisi">0%</div>
+            </div>
+            <div class="kpi-icon icon-revisi"><i class="bi bi-exclamation-triangle"></i></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Belum Dicek -->
+      <div class="col-6 col-sm-4 col-md-3 col-xl">
+        <div class="kpi-card kpi-belumdicek">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="overflow-hidden">
+              <div class="kpi-label text-secondary">Belum Dicek</div>
+              <h3 class="kpi-val fw-bold text-secondary" id="kpiBelumDicek">0</h3>
+              <div class="kpi-sub text-secondary fw-semibold" id="kpiSubtextBelumDicek">0%</div>
+            </div>
+            <div class="kpi-icon icon-belumdicek"><i class="bi bi-hourglass-split"></i></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ditolak -->
+      <div class="col-6 col-sm-4 col-md-3 col-xl">
+        <div class="kpi-card kpi-ditolak">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="overflow-hidden">
+              <div class="kpi-label text-danger">Ditolak</div>
+              <h3 class="kpi-val fw-bold text-danger" id="kpiDitolak">0</h3>
+              <div class="kpi-sub text-danger fw-semibold" id="kpiSubtextDitolak">0%</div>
+            </div>
+            <div class="kpi-icon icon-ditolak"><i class="bi bi-x-circle"></i></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sisulka -->
+      <div class="col-6 col-sm-4 col-md-3 col-xl">
+        <div class="kpi-card kpi-sisulka">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="overflow-hidden">
+              <div class="kpi-label" style="color: #7c3aed;">Sisulka</div>
+              <h3 class="kpi-val fw-bold" style="color: #7c3aed;" id="kpiSisulka">0</h3>
+              <div class="kpi-sub fw-semibold" style="color: #7c3aed;" id="kpiSubtextSisulka">0%</div>
+            </div>
+            <div class="kpi-icon icon-sisulka"><i class="bi bi-folder2-open"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card: Jumlah Ajuan per Bulan (Toggle Grafik / Tabel) -->
+    <div class="row g-3 mb-4">
+      <div class="col-12">
+        <div class="dashboard-card">
+          <div class="card-title-custom justify-content-between flex-wrap gap-2 align-items-start mb-3">
+            <div>
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-bar-chart-fill text-primary fs-5" id="iconTitleBulan"></i>
+                <span class="fw-bold fs-6" id="textTitleBulan">Jumlah Ajuan per Bulan</span>
+              </div>
+              <div class="mt-1 ps-4">
+                <span class="badge bg-light text-primary border" id="badgeChartBulanPeriode">Semua Periode</span>
+              </div>
+            </div>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <!-- Toggle Button Tampilan Grafik / Tabel -->
+              <div class="btn-group btn-group-sm shadow-sm" role="group" aria-label="Toggle Tampilan">
+                <button type="button" class="btn btn-primary active fw-semibold" id="btnToggleChartBulan" onclick="switchBulanView('chart')">
+                  <i class="bi bi-bar-chart-fill me-1"></i>Grafik
+                </button>
+                <button type="button" class="btn btn-outline-primary fw-semibold" id="btnToggleTableBulan" onclick="switchBulanView('table')">
+                  <i class="bi bi-table me-1"></i>Tabel
+                </button>
+              </div>
+              <!-- Tombol Ekspor Excel -->
+              <button class="btn btn-outline-success btn-sm fw-semibold shadow-sm" id="btnExportBulanXLSX" onclick="exportBulanXLSX()">
+                <i class="bi bi-file-earmark-excel me-1"></i>Ekspor Excel
+              </button>
+            </div>
+          </div>
+
+          <!-- Tampilan 1: Grafik Batang -->
+          <div id="containerChartBulan" style="position: relative; height: 380px;">
+            <canvas id="chartStatusBarisPenuh"></canvas>
+          </div>
+
+          <!-- Tampilan 2: Tabel Rincian per Bulan -->
+          <div id="containerTableBulan" style="display: none;">
+            <div class="table-responsive" style="max-height: 380px; overflow-y: auto;">
+              <table class="table table-matrix table-hover mb-0 text-center" style="width: 100%; min-width: 820px;">
+                <thead>
+                  <tr>
+                    <th rowspan="2" class="text-start align-middle freeze-col" style="min-width: 140px; width: 18%;">Bulan Ajuan</th>
+                    <th colspan="6" class="bg-light border-bottom text-secondary small text-uppercase fw-bold">Status Ajuan</th>
+                    <th rowspan="2" class="bg-primary-subtle text-primary fw-bold align-middle" style="min-width: 100px; width: 14%;">Total Ajuan</th>
+                  </tr>
+                  <tr>
+                    <th style="min-width: 85px;" class="text-success">Approve</th>
+                    <th style="min-width: 95px;" class="text-info-emphasis">Revisi Kirim</th>
+                    <th style="min-width: 80px;" class="text-warning-emphasis">Revisi</th>
+                    <th style="min-width: 90px;" class="text-secondary">Belum Cek</th>
+                    <th style="min-width: 80px;" class="text-danger">Ditolak</th>
+                    <th style="min-width: 80px;" style="color: #8b5cf6;">Sisulka</th>
+                  </tr>
+                </thead>
+                <tbody id="bulanTableBody">
+                  <!-- Diisi via JavaScript -->
+                </tbody>
+                <tfoot id="bulanTableFoot">
+                  <!-- Baris Total Kumulatif -->
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Card: Distribusi Ajuan Ijin Penggunaan Gelar Akademik (Toggle Grafik / Tabel) -->
+    <div class="row g-3 mb-4">
+      <div class="col-12">
+        <div class="dashboard-card">
+          <div class="card-title-custom justify-content-between flex-wrap gap-2 align-items-start mb-3">
+            <div>
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-award text-primary fs-5" id="iconTitleGolongan"></i>
+                <span class="fw-bold fs-6" id="textTitleGolongan">Distribusi Ajuan Ijin Penggunaan Gelar Akademik (Golongan yang Diajukan)</span>
+              </div>
+              <div class="mt-1 ps-4">
+                <span class="badge bg-light text-primary border" id="badgeGolonganPeriode">Semua Periode</span>
+              </div>
+            </div>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <!-- Toggle Button Tampilan Grafik / Tabel -->
+              <div class="btn-group btn-group-sm shadow-sm" role="group" aria-label="Toggle Tampilan Golongan">
+                <button type="button" class="btn btn-primary active fw-semibold" id="btnToggleChartGolongan" onclick="switchGolonganView('chart')">
+                  <i class="bi bi-bar-chart-fill me-1"></i>Grafik
+                </button>
+                <button type="button" class="btn btn-outline-primary fw-semibold" id="btnToggleTableGolongan" onclick="switchGolonganView('table')">
+                  <i class="bi bi-table me-1"></i>Tabel
+                </button>
+              </div>
+              <!-- Tombol Ekspor Excel -->
+              <button class="btn btn-outline-success btn-sm fw-semibold shadow-sm" id="btnExportGolonganXLSX" onclick="exportGolonganXLSX()">
+                <i class="bi bi-file-earmark-excel me-1"></i>Ekspor Excel
+              </button>
+            </div>
+          </div>
+
+          <!-- Tampilan 1: Grafik Batang -->
+          <div id="containerChartGolongan" style="position: relative; height: 380px;">
+            <canvas id="chartGolongan"></canvas>
+          </div>
+
+          <!-- Tampilan 2: Tabel Rincian per Golongan -->
+          <div id="containerTableGolongan" style="display: none;">
+            <div class="table-responsive" style="max-height: 380px; overflow-y: auto;">
+              <table class="table table-matrix table-hover mb-0 text-center" style="width: 100%; min-width: 820px;">
+                <thead>
+                  <tr>
+                    <th rowspan="2" class="text-start align-middle freeze-col" style="min-width: 140px; width: 18%;">Golongan</th>
+                    <th colspan="6" class="bg-light border-bottom text-secondary small text-uppercase fw-bold">Status Ajuan</th>
+                    <th rowspan="2" class="bg-primary-subtle text-primary fw-bold align-middle" style="min-width: 100px; width: 14%;">Total Ajuan</th>
+                  </tr>
+                  <tr>
+                    <th style="min-width: 85px;" class="text-success">Approve</th>
+                    <th style="min-width: 95px;" class="text-info-emphasis">Revisi Kirim</th>
+                    <th style="min-width: 80px;" class="text-warning-emphasis">Revisi</th>
+                    <th style="min-width: 90px;" class="text-secondary">Belum Cek</th>
+                    <th style="min-width: 80px;" class="text-danger">Ditolak</th>
+                    <th style="min-width: 80px;" style="color: #8b5cf6;">Sisulka</th>
+                  </tr>
+                </thead>
+                <tbody id="golonganTableBody">
+                  <!-- Diisi via JavaScript -->
+                </tbody>
+                <tfoot id="golonganTableFoot">
+                  <!-- Baris Total Kumulatif -->
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabel Matriks Rekapitulasi Wilayah: Kecamatan vs Jenjang -->
+    <div class="dashboard-card p-0 overflow-hidden mb-4">
+      <div class="p-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2 bg-light">
+        <div>
+          <div class="fw-bold text-dark d-flex align-items-center gap-2">
+            <i class="bi bi-grid-3x3-gap-fill text-primary"></i>
+            <span>Matriks Rekapitulasi Ajuan per Kecamatan &amp; Jenjang</span>
+          </div>
+          <div class="small text-muted mt-1" id="matrixSubtext">Menampilkan sebaran ajuan dan jumlah berkas revisi per wilayah</div>
+        </div>
+        <div>
+          <button class="btn btn-outline-success btn-sm fw-semibold shadow-sm" onclick="exportMatrixXLSX()">
+            <i class="bi bi-file-earmark-excel me-1"></i>Ekspor Rekap
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive" style="max-height: 460px; overflow-y: auto;">
+        <table class="table table-matrix table-hover mb-0 text-center" style="width: 100%; min-width: 1100px;">
+          <thead>
+            <tr>
+              <th rowspan="2" class="text-start align-middle freeze-col" style="min-width: 160px; width: 17%;">Kecamatan</th>
+              <th colspan="5" class="bg-light border-bottom text-secondary small text-uppercase fw-bold">Sebaran Jenjang</th>
+              <th colspan="6" class="bg-light border-bottom text-secondary small text-uppercase fw-bold">Status Ajuan</th>
+              <th rowspan="2" class="bg-primary-subtle text-primary fw-bold align-middle" style="min-width: 90px; width: 9%;">Total Ajuan</th>
+            </tr>
+            <tr>
+              <th style="min-width: 60px;">TK</th>
+              <th style="min-width: 60px;">SD</th>
+              <th style="min-width: 60px;">SMP</th>
+              <th style="min-width: 60px;">SKB</th>
+              <th style="min-width: 68px;">KORWIL</th>
+              <th style="min-width: 72px;" class="text-success">Approve</th>
+              <th style="min-width: 86px;" class="text-info-emphasis">Revisi Kirim</th>
+              <th style="min-width: 68px;" class="text-warning-emphasis">Revisi</th>
+              <th style="min-width: 78px;" class="text-secondary">Belum Cek</th>
+              <th style="min-width: 68px;" class="text-danger">Ditolak</th>
+              <th style="min-width: 68px;" style="color: #8b5cf6;">Sisulka</th>
+            </tr>
+          </thead>
+          <tbody id="matrixTableBody">
+            <!-- Diisi via JavaScript -->
+          </tbody>
+          <tfoot id="matrixTableFoot">
+            <!-- Baris Total Kabupaten -->
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="text-center py-3 text-muted small border-top bg-white">
+    &copy; 2026 Dinas Pendidikan dan Kebudayaan Kabupaten Magelang &bull; Dashboard Eksekutif Ijin Penggunaan Gelar Akademik PNS
+  </footer>
+
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+// =================================================================
+// Dashboard Eksekutif Ijin Penggunaan Gelar Akademik (IPGA) - Disdikbud Magelang
+// Frontend Logic (ES5 Compliant - No Template Literals)
+// =================================================================
+
+var allRecords = [];
+var lastFilteredRecords = [];
+var lastSelectedBulan = '';
+var currentBulanView = 'chart'; // 'chart' | 'table'
+var currentBulanRows = [];
+var currentBulanTotals = null;
+var currentGolonganView = 'chart'; // 'chart' | 'table'
+var currentGolonganRows = [];
+var currentGolonganTotals = null;
+var chartGolonganInstance = null;
+var chartStatusBarisPenuhInstance = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+  loadDashboardData(false);
+  setupListeners();
+});
+
+function setupListeners() {
+  document.getElementById('selectTahun').addEventListener('change', onFilterChange);
+  document.getElementById('selectBulan').addEventListener('change', onFilterChange);
+  document.getElementById('selectJenjang').addEventListener('change', onFilterChange);
+  document.getElementById('selectKecamatan').addEventListener('change', onFilterChange);
+  if (document.getElementById('selectJenisKP')) {
+    document.getElementById('selectJenisKP').addEventListener('change', onFilterChange);
+  }
+}
+
+function loadDashboardData(isRefresh) {
+  showLoading(true);
+
+  if (typeof google === 'undefined' || !google.script || !google.script.run) {
+    setTimeout(function() {
+      handleSuccess(generateDummyExecutiveData());
+    }, 500);
+    return;
+  }
+
+  if (isRefresh) {
+    google.script.run
+      .withSuccessHandler(handleSuccess)
+      .withFailureHandler(handleError)
+      .refreshDashboardData();
+  } else {
+    google.script.run
+      .withSuccessHandler(handleSuccess)
+      .withFailureHandler(handleError)
+      .getDashboardData(false);
+  }
+}
+
+function refreshData() {
+  loadDashboardData(true);
+}
+
+function handleSuccess(rawResponse) {
+  showLoading(false);
+  var response = rawResponse;
+  if (typeof rawResponse === 'string') {
+    try {
+      response = JSON.parse(rawResponse);
+    } catch (e) {
+      alert('Gagal mem-parse respon data server: ' + e.message);
+      return;
+    }
+  }
+
+  if (!response || !response.success) {
+    var msg = (response && response.message) ? response.message : 'Respon data tidak valid.';
+    alert('Gagal memuat data: ' + msg);
+    return;
+  }
+
+  allRecords = response.records || [];
+  populatePeriodeSelects(response.filterOptions);
+
+  if (response.updatedAt) {
+    document.getElementById('lastUpdatedText').innerText = 'Data per: ' + response.updatedAt;
+  }
+
+  onFilterChange();
+}
+
+function handleError(err) {
+  showLoading(false);
+  alert('Terjadi kesalahan server: ' + (err && err.message ? err.message : String(err)));
+}
+
+// Mengisi dropdown Tahun (Kolom J), Bulan (Kolom I), Jenjang, dan Kecamatan
+function populatePeriodeSelects(filterOptions) {
+  var selTahun = document.getElementById('selectTahun');
+  var selBulan = document.getElementById('selectBulan');
+  var selJenjang = document.getElementById('selectJenjang');
+  var selKecamatan = document.getElementById('selectKecamatan');
+  var selJenisKP = document.getElementById('selectJenisKP');
+
+  var curTahun = selTahun ? selTahun.value : '';
+  var curBulan = selBulan ? selBulan.value : '';
+  var curJenjang = selJenjang ? selJenjang.value : '';
+  var curKecamatan = selKecamatan ? selKecamatan.value : '';
+  var curJenisKP = selJenisKP ? selJenisKP.value : '';
+
+  if (selTahun) selTahun.innerHTML = '<option value="">Semua Tahun</option>';
+  if (selBulan) selBulan.innerHTML = '<option value="">Semua Bulan</option>';
+  if (selJenjang) selJenjang.innerHTML = '<option value="">Semua Jenjang</option>';
+  if (selKecamatan) selKecamatan.innerHTML = '<option value="">Semua Kecamatan</option>';
+
+  // Jika filterOptions tidak lengkap, ekstrak otomatis dari allRecords
+  var yearsList = (filterOptions && filterOptions.years) ? filterOptions.years : [];
+  var monthsList = (filterOptions && filterOptions.months) ? filterOptions.months : [];
+  var jenjangList = (filterOptions && filterOptions.jenjang) ? filterOptions.jenjang : [];
+  var kecList = (filterOptions && filterOptions.kecamatan) ? filterOptions.kecamatan : [];
+
+  if (jenjangList.length === 0 && allRecords.length > 0) {
+    var jSet = {};
+    for (var a = 0; a < allRecords.length; a++) {
+      if (allRecords[a].jenjang && allRecords[a].jenjang !== 'Lainnya') jSet[allRecords[a].jenjang] = true;
+    }
+    jenjangList = Object.keys(jSet).sort();
+  }
+
+  // Pastikan pilihan 'SKB' dan 'KORWIL' selalu tersedia di daftar Jenjang Sekolah
+  if (jenjangList.indexOf('SKB') === -1) {
+    jenjangList.push('SKB');
+  }
+  if (jenjangList.indexOf('KORWIL') === -1) {
+    jenjangList.push('KORWIL');
+  }
+  jenjangList.sort();
+
+  if (kecList.length === 0 && allRecords.length > 0) {
+    var kSet = {};
+    for (var b = 0; b < allRecords.length; b++) {
+      if (allRecords[b].kec && allRecords[b].kec !== 'Lainnya') kSet[allRecords[b].kec] = true;
+    }
+    kecList = Object.keys(kSet).sort();
+  }
+
+  // Isian Tahun sesuai Kolom J
+  for (var i = 0; i < yearsList.length; i++) {
+    var y = yearsList[i];
+    if (y && selTahun) {
+      var opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = 'Tahun ' + y;
+      selTahun.appendChild(opt);
+    }
+  }
+
+  // Isian Bulan sesuai Kolom I
+  for (var j = 0; j < monthsList.length; j++) {
+    var m = monthsList[j];
+    if (m && selBulan) {
+      var opt2 = document.createElement('option');
+      opt2.value = m;
+      opt2.textContent = m;
+      selBulan.appendChild(opt2);
+    }
+  }
+
+  // Isian Jenjang (termasuk SKB)
+  for (var jj = 0; jj < jenjangList.length; jj++) {
+    var jg = jenjangList[jj];
+    if (jg && selJenjang) {
+      var opt3 = document.createElement('option');
+      opt3.value = jg;
+      opt3.textContent = jg;
+      selJenjang.appendChild(opt3);
+    }
+  }
+
+  // Isian Kecamatan
+  for (var kk = 0; kk < kecList.length; kk++) {
+    var kc = kecList[kk];
+    if (kc && selKecamatan) {
+      var opt4 = document.createElement('option');
+      opt4.value = kc;
+      opt4.textContent = kc;
+      selKecamatan.appendChild(opt4);
+    }
+  }
+
+  if (curTahun && selTahun) selTahun.value = curTahun;
+  if (curBulan && selBulan) selBulan.value = curBulan;
+  if (curJenjang && selJenjang) selJenjang.value = curJenjang;
+  if (curKecamatan && selKecamatan) selKecamatan.value = curKecamatan;
+  if (curJenisKP && selJenisKP) selJenisKP.value = curJenisKP;
+}
+
+function resetPeriode() {
+  var selTahun = document.getElementById('selectTahun');
+  var selBulan = document.getElementById('selectBulan');
+  var selJenjang = document.getElementById('selectJenjang');
+  var selKecamatan = document.getElementById('selectKecamatan');
+  var selJenisKP = document.getElementById('selectJenisKP');
+
+  if (selTahun) selTahun.value = '';
+  if (selBulan) selBulan.value = '';
+  if (selJenjang) selJenjang.value = '';
+  if (selKecamatan) selKecamatan.value = '';
+  if (selJenisKP) selJenisKP.value = '';
+  onFilterChange();
+}
+
+// Saat user memilih tahun, bulan, jenjang, kecamatan, atau jenis IPGA
+function onFilterChange() {
+  var selectedTahun = document.getElementById('selectTahun') ? document.getElementById('selectTahun').value : '';
+  var selectedBulan = document.getElementById('selectBulan') ? document.getElementById('selectBulan').value : '';
+  var selectedJenjang = document.getElementById('selectJenjang') ? document.getElementById('selectJenjang').value : '';
+  var selectedKecamatan = document.getElementById('selectKecamatan') ? document.getElementById('selectKecamatan').value : '';
+  var selectedJenisKP = document.getElementById('selectJenisKP') ? document.getElementById('selectJenisKP').value : '';
+
+  // Filter record sesuai kriteria
+  var filtered = [];
+  for (var i = 0; i < allRecords.length; i++) {
+    var rec = allRecords[i];
+    if (selectedTahun && rec.tahun_ajuan !== selectedTahun) continue;
+    if (selectedBulan && rec.bulan_ajuan !== selectedBulan) continue;
+    if (selectedJenjang) {
+      if (selectedJenjang === 'SKB') {
+        var jStr = (rec.jenjang || '').toUpperCase();
+        if (jStr.indexOf('SKB') === -1) continue;
+      } else if (selectedJenjang === 'KORWIL') {
+        var jStrK = (rec.jenjang || '').toUpperCase();
+        if (jStrK.indexOf('KORWIL') === -1) continue;
+      } else if (rec.jenjang !== selectedJenjang) {
+        continue;
+      }
+    }
+    if (selectedKecamatan && rec.kec !== selectedKecamatan) continue;
+    if (selectedJenisKP) {
+      // Pencocokan Jenis IPGA (Fungsional, Reguler, PI) dari kolom AG
+      var recJenis = rec.jenis_kp || '';
+      if (recJenis !== selectedJenisKP) {
+        var rawJ = (rec.raw_jenis_kp || '').toLowerCase();
+        if (selectedJenisKP === 'Fungsional' && (rawJ.indexOf('fungsional') === -1 && rawJ.indexOf('guru') === -1)) continue;
+        else if (selectedJenisKP === 'Reguler' && rawJ.indexOf('reguler') === -1) continue;
+        else if (selectedJenisKP === 'PI' && (rawJ.indexOf('ijasah') === -1 && rawJ.indexOf('ijazah') === -1 && rawJ.indexOf('pi') === -1)) continue;
+        else if (selectedJenisKP !== 'Fungsional' && selectedJenisKP !== 'Reguler' && selectedJenisKP !== 'PI') continue;
+      }
+    }
+    filtered.push(rec);
+  }
+
+  // Label badge periode & filter
+  var labelParts = [];
+  if (selectedBulan && selectedTahun) {
+    labelParts.push(selectedBulan + ' ' + selectedTahun);
+  } else if (selectedBulan) {
+    labelParts.push('Bulan ' + selectedBulan);
+  } else if (selectedTahun) {
+    labelParts.push('Tahun ' + selectedTahun);
+  } else {
+    labelParts.push('Semua Periode');
+  }
+
+  if (selectedJenjang) {
+    labelParts.push(selectedJenjang);
+  }
+  if (selectedKecamatan) {
+    labelParts.push('Kec. ' + selectedKecamatan);
+  }
+  if (selectedJenisKP) {
+    labelParts.push('IPGA: ' + selectedJenisKP);
+  }
+
+  var labelPeriode = labelParts.join(' | ');
+  if (document.getElementById('badgeChartBulanPeriode')) {
+    document.getElementById('badgeChartBulanPeriode').innerText = labelPeriode;
+  }
+  document.getElementById('badgeGolonganPeriode').innerText = labelPeriode;
+  if (document.getElementById('matrixSubtext')) {
+    document.getElementById('matrixSubtext').innerText = 'Data rekapitulasi periode: ' + labelPeriode;
+  }
+  lastFilteredRecords = filtered;
+  lastSelectedBulan = selectedBulan;
+
+  updateKPICards(filtered);
+  renderChartStatusBarisPenuh(filtered, selectedBulan);
+  renderTableBulan(filtered, selectedBulan);
+  renderChartGolongan(filtered);
+  renderTableGolongan(filtered);
+  renderMatrixTable(filtered);
+}
+
+// 1. Update Kartu KPI Sesuai Kriteria Kolom AE
+function updateKPICards(records) {
+  var total = records.length;
+  var countApprove = 0;
+  var countRevisiDikirim = 0;
+  var countRevisi = 0;
+  var countBelumDicek = 0;
+  var countDitolak = 0;
+  var countSisulka = 0;
+
+  for (var i = 0; i < records.length; i++) {
+    var s = (records[i].status_ae || records[i].status || '').trim();
+    if (s === 'Approve') countApprove++;
+    else if (s === 'Revisi Dikirim') countRevisiDikirim++;
+    else if (s === 'Revisi') countRevisi++;
+    else if (s === 'Belum Dicek') countBelumDicek++;
+    else if (s === 'Ditolak') countDitolak++;
+    else if (s === 'Sisulka') countSisulka++;
+    else countBelumDicek++;
+  }
+
+  var calcPct = function(cnt) {
+    return total > 0 ? ((cnt / total) * 100).toFixed(1) + '%' : '0%';
+  };
+
+  // Set Angka Utama
+  document.getElementById('kpiTotal').innerText = total.toLocaleString('id-ID');
+  document.getElementById('kpiApprove').innerText = countApprove.toLocaleString('id-ID');
+  document.getElementById('kpiRevisiDikirim').innerText = countRevisiDikirim.toLocaleString('id-ID');
+  document.getElementById('kpiRevisi').innerText = countRevisi.toLocaleString('id-ID');
+  document.getElementById('kpiBelumDicek').innerText = countBelumDicek.toLocaleString('id-ID');
+  document.getElementById('kpiDitolak').innerText = countDitolak.toLocaleString('id-ID');
+  document.getElementById('kpiSisulka').innerText = countSisulka.toLocaleString('id-ID');
+
+  // Set Persentase Subtext
+  document.getElementById('kpiSubtextApprove').innerText = calcPct(countApprove) + ' ajuan';
+  document.getElementById('kpiSubtextRevisiDikirim').innerText = calcPct(countRevisiDikirim) + ' ajuan';
+  document.getElementById('kpiSubtextRevisi').innerText = calcPct(countRevisi) + ' ajuan';
+  document.getElementById('kpiSubtextBelumDicek').innerText = calcPct(countBelumDicek) + ' ajuan';
+  document.getElementById('kpiSubtextDitolak').innerText = calcPct(countDitolak) + ' ajuan';
+  document.getElementById('kpiSubtextSisulka').innerText = calcPct(countSisulka) + ' ajuan';
+}
+
+// 2. Grafik Batang 1 Baris: 6 Status Kolom AE per Bulan (Januari s.d. Desember)
+var bulanDaftarLengkap = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+function renderChartStatusBarisPenuh(records, selectedBulan) {
+  var ctx = document.getElementById('chartStatusBarisPenuh').getContext('2d');
+
+  // Jika user memilih bulan tertentu di filter utama, tampilkan kategori bulan tersebut agar sinkron dengan card KPI
+  // Jika 'Semua Bulan' (selectedBulan kosong), tampilkan 12 bulan penuh (Januari s.d. Desember)
+  var activeBulanList = selectedBulan ? [selectedBulan] : bulanDaftarLengkap;
+
+  // Inisialisasi counter per bulan untuk ke-6 status
+  var mapApprove = {};
+  var mapRevisiDikirim = {};
+  var mapRevisi = {};
+  var mapBelumDicek = {};
+  var mapDitolak = {};
+  var mapSisulka = {};
+
+  for (var b = 0; b < activeBulanList.length; b++) {
+    var bName = activeBulanList[b];
+    mapApprove[bName] = 0;
+    mapRevisiDikirim[bName] = 0;
+    mapRevisi[bName] = 0;
+    mapBelumDicek[bName] = 0;
+    mapDitolak[bName] = 0;
+    mapSisulka[bName] = 0;
+  }
+
+  for (var i = 0; i < records.length; i++) {
+    var r = records[i];
+    var bln = r.bulan_ajuan;
+    if (!bln || bln === 'Tidak Diketahui') continue;
+
+    // Normalisasi pencocokan nama bulan
+    var matchedBulan = '';
+    for (var m = 0; m < activeBulanList.length; m++) {
+      if (bln.toLowerCase().indexOf(activeBulanList[m].toLowerCase()) !== -1) {
+        matchedBulan = activeBulanList[m];
+        break;
+      }
+    }
+    if (!matchedBulan) matchedBulan = bln;
+
+    var st = (r.status_ae || r.status || '').trim();
+    if (st === 'Approve') {
+      mapApprove[matchedBulan] = (mapApprove[matchedBulan] || 0) + 1;
+    } else if (st === 'Revisi Dikirim') {
+      mapRevisiDikirim[matchedBulan] = (mapRevisiDikirim[matchedBulan] || 0) + 1;
+    } else if (st === 'Revisi') {
+      mapRevisi[matchedBulan] = (mapRevisi[matchedBulan] || 0) + 1;
+    } else if (st === 'Belum Dicek') {
+      mapBelumDicek[matchedBulan] = (mapBelumDicek[matchedBulan] || 0) + 1;
+    } else if (st === 'Ditolak') {
+      mapDitolak[matchedBulan] = (mapDitolak[matchedBulan] || 0) + 1;
+    } else if (st === 'Sisulka') {
+      mapSisulka[matchedBulan] = (mapSisulka[matchedBulan] || 0) + 1;
+    } else {
+      mapBelumDicek[matchedBulan] = (mapBelumDicek[matchedBulan] || 0) + 1;
+    }
+  }
+
+  var dataApprove = [];
+  var dataRevisiDikirim = [];
+  var dataRevisi = [];
+  var dataBelumDicek = [];
+  var dataDitolak = [];
+  var dataSisulka = [];
+
+  for (var k = 0; k < activeBulanList.length; k++) {
+    var bKey = activeBulanList[k];
+    dataApprove.push(mapApprove[bKey] || 0);
+    dataRevisiDikirim.push(mapRevisiDikirim[bKey] || 0);
+    dataRevisi.push(mapRevisi[bKey] || 0);
+    dataBelumDicek.push(mapBelumDicek[bKey] || 0);
+    dataDitolak.push(mapDitolak[bKey] || 0);
+    dataSisulka.push(mapSisulka[bKey] || 0);
+  }
+
+  // Hitung total usulan per bulan untuk ditampilkan di bawah nama bulan
+  var displayLabels = [];
+  for (var l = 0; l < activeBulanList.length; l++) {
+    var bNameKey = activeBulanList[l];
+    var totalBulan = (mapApprove[bNameKey] || 0) +
+                     (mapRevisiDikirim[bNameKey] || 0) +
+                     (mapRevisi[bNameKey] || 0) +
+                     (mapBelumDicek[bNameKey] || 0) +
+                     (mapDitolak[bNameKey] || 0) +
+                     (mapSisulka[bNameKey] || 0);
+
+    // Multi-line label: Baris 1 nama bulan, Baris 2 total usulan
+    displayLabels.push([bNameKey, '(' + totalBulan + ')']);
+  }
+
+  // Plugin Chart.js kustom: Angka di atas batang bernilai (> 0)
+  var barValueLabelsPlugin = {
+    id: 'barValueLabels',
+    afterDatasetsDraw: function(chart) {
+      try {
+        var chartCtx = chart.ctx;
+        chart.data.datasets.forEach(function(dataset, datasetIndex) {
+          var meta = chart.getDatasetMeta(datasetIndex);
+          if (meta.hidden) return;
+
+          meta.data.forEach(function(bar, index) {
+            var val = dataset.data[index];
+            if (val > 0 && bar && typeof bar.x === 'number' && typeof bar.y === 'number') {
+              chartCtx.save();
+              chartCtx.font = 'bold 11px "Plus Jakarta Sans", sans-serif';
+              chartCtx.fillStyle = '#334155';
+              chartCtx.textAlign = 'center';
+              chartCtx.textBaseline = 'bottom';
+              chartCtx.fillText(val, bar.x, bar.y - 3);
+              chartCtx.restore();
+            }
+          });
+        });
+      } catch (err) {
+        console.warn('Gagal render barValueLabels:', err);
+      }
+    }
+  };
+
+  if (chartStatusBarisPenuhInstance) chartStatusBarisPenuhInstance.destroy();
+
+  chartStatusBarisPenuhInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: displayLabels,
+      datasets: [
+        {
+          label: 'Approve',
+          data: dataApprove,
+          backgroundColor: '#10b981',
+          borderRadius: 4
+        },
+        {
+          label: 'Revisi Dikirim',
+          data: dataRevisiDikirim,
+          backgroundColor: '#0ea5e9',
+          borderRadius: 4
+        },
+        {
+          label: 'Revisi',
+          data: dataRevisi,
+          backgroundColor: '#f59e0b',
+          borderRadius: 4
+        },
+        {
+          label: 'Belum Dicek',
+          data: dataBelumDicek,
+          backgroundColor: '#64748b',
+          borderRadius: 4
+        },
+        {
+          label: 'Ditolak',
+          data: dataDitolak,
+          backgroundColor: '#ef4444',
+          borderRadius: 4
+        },
+        {
+          label: 'Sisulka',
+          data: dataSisulka,
+          backgroundColor: '#8b5cf6',
+          borderRadius: 4
+        }
+      ]
+    },
+    plugins: [barValueLabelsPlugin],
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      maxBarThickness: 45,
+      barPercentage: 0.9,
+      categoryPercentage: 0.88,
+      layout: {
+        padding: {
+          top: 25
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: {
+            boxWidth: 12,
+            usePointStyle: true,
+            padding: 15
+          }
+        },
+        tooltip: {
+          callbacks: {
+            title: function(tooltipItems) {
+              if (!tooltipItems || tooltipItems.length === 0) return '';
+              var item = tooltipItems[0];
+              var label = item.chart.data.labels[item.dataIndex];
+              return Array.isArray(label) ? label[0] : label;
+            },
+            label: function(context) {
+              return ' ' + context.dataset.label + ': ' + context.raw + ' ajuan';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          stacked: false,
+          grid: {
+            display: true,
+            drawOnChartArea: true,
+            drawTicks: true,
+            color: 'rgba(148, 163, 184, 0.35)',
+            lineWidth: 1.2
+          },
+          ticks: {
+            font: {
+              family: "'Plus Jakarta Sans', sans-serif",
+              size: 11,
+              weight: '600'
+            },
+            color: '#475569'
+          }
+        },
+        y: {
+          stacked: false,
+          beginAtZero: true,
+          suggestedMax: function() {
+            var allVals = [].concat(dataApprove, dataRevisiDikirim, dataRevisi, dataBelumDicek, dataDitolak, dataSisulka);
+            var maxVal = Math.max.apply(null, allVals);
+            return maxVal > 0 ? maxVal + 1 : 5;
+          }(),
+          ticks: { precision: 0 },
+          grid: {
+            color: 'rgba(226, 232, 240, 0.7)'
+          }
+        }
+      }
+    }
+  });
+}
+
+// 2b. Tabel Rincian Jumlah Usulan per Bulan
+function renderTableBulan(records, selectedBulan) {
+  var tbody = document.getElementById('bulanTableBody');
+  var tfoot = document.getElementById('bulanTableFoot');
+  if (!tbody || !tfoot) return;
+
+  var activeBulanList = selectedBulan ? [selectedBulan] : bulanDaftarLengkap;
+
+  var mapApprove = {};
+  var mapRevisiDikirim = {};
+  var mapRevisi = {};
+  var mapBelumDicek = {};
+  var mapDitolak = {};
+  var mapSisulka = {};
+
+  for (var b = 0; b < activeBulanList.length; b++) {
+    var bName = activeBulanList[b];
+    mapApprove[bName] = 0;
+    mapRevisiDikirim[bName] = 0;
+    mapRevisi[bName] = 0;
+    mapBelumDicek[bName] = 0;
+    mapDitolak[bName] = 0;
+    mapSisulka[bName] = 0;
+  }
+
+  for (var i = 0; i < records.length; i++) {
+    var r = records[i];
+    var bln = r.bulan_ajuan;
+    if (!bln || bln === 'Tidak Diketahui') continue;
+
+    var matchedBulan = '';
+    for (var m = 0; m < activeBulanList.length; m++) {
+      if (bln.toLowerCase().indexOf(activeBulanList[m].toLowerCase()) !== -1) {
+        matchedBulan = activeBulanList[m];
+        break;
+      }
+    }
+    if (!matchedBulan) matchedBulan = bln;
+
+    var st = (r.status_ae || r.status || '').trim();
+    if (st === 'Approve') {
+      mapApprove[matchedBulan] = (mapApprove[matchedBulan] || 0) + 1;
+    } else if (st === 'Revisi Dikirim') {
+      mapRevisiDikirim[matchedBulan] = (mapRevisiDikirim[matchedBulan] || 0) + 1;
+    } else if (st === 'Revisi') {
+      mapRevisi[matchedBulan] = (mapRevisi[matchedBulan] || 0) + 1;
+    } else if (st === 'Belum Dicek') {
+      mapBelumDicek[matchedBulan] = (mapBelumDicek[matchedBulan] || 0) + 1;
+    } else if (st === 'Ditolak') {
+      mapDitolak[matchedBulan] = (mapDitolak[matchedBulan] || 0) + 1;
+    } else if (st === 'Sisulka') {
+      mapSisulka[matchedBulan] = (mapSisulka[matchedBulan] || 0) + 1;
+    } else {
+      mapBelumDicek[matchedBulan] = (mapBelumDicek[matchedBulan] || 0) + 1;
+    }
+  }
+
+  var formatBulanCell = function(val, extraClass, extraStyle) {
+    if (!val || val === 0) {
+      return '<span class="text-muted opacity-50">-</span>';
+    }
+    var cls = extraClass ? ' class="' + extraClass + '"' : '';
+    var stl = extraStyle ? ' style="' + extraStyle + '"' : '';
+    return '<span' + cls + stl + '>' + val.toLocaleString('id-ID') + '</span>';
+  };
+
+  var tbodyHtml = '';
+  var sumApprove = 0, sumRevisiDikirim = 0, sumRevisi = 0;
+  var sumBelumDicek = 0, sumDitolak = 0, sumSisulka = 0, sumTotal = 0;
+
+  currentBulanRows = [];
+  for (var k = 0; k < activeBulanList.length; k++) {
+    var bKey = activeBulanList[k];
+    var cApprove = mapApprove[bKey] || 0;
+    var cRevisiDikirim = mapRevisiDikirim[bKey] || 0;
+    var cRevisi = mapRevisi[bKey] || 0;
+    var cBelumDicek = mapBelumDicek[bKey] || 0;
+    var cDitolak = mapDitolak[bKey] || 0;
+    var cSisulka = mapSisulka[bKey] || 0;
+    var cTotal = cApprove + cRevisiDikirim + cRevisi + cBelumDicek + cDitolak + cSisulka;
+
+    sumApprove += cApprove;
+    sumRevisiDikirim += cRevisiDikirim;
+    sumRevisi += cRevisi;
+    sumBelumDicek += cBelumDicek;
+    sumDitolak += cDitolak;
+    sumSisulka += cSisulka;
+    sumTotal += cTotal;
+
+    currentBulanRows.push({
+      bulan: bKey,
+      approve: cApprove,
+      revisiDikirim: cRevisiDikirim,
+      revisi: cRevisi,
+      belumDicek: cBelumDicek,
+      ditolak: cDitolak,
+      sisulka: cSisulka,
+      total: cTotal
+    });
+
+    tbodyHtml += '<tr>';
+    tbodyHtml += '<td class="text-start fw-semibold freeze-col"><i class="bi bi-calendar-event text-secondary me-1"></i>' + escapeHtml(bKey) + '</td>';
+    tbodyHtml += '<td>' + formatBulanCell(cApprove, 'text-success fw-bold') + '</td>';
+    tbodyHtml += '<td>' + formatBulanCell(cRevisiDikirim, 'text-info-emphasis fw-semibold') + '</td>';
+    tbodyHtml += '<td>' + formatBulanCell(cRevisi, 'text-warning-emphasis fw-bold') + '</td>';
+    tbodyHtml += '<td>' + formatBulanCell(cBelumDicek, 'text-secondary') + '</td>';
+    tbodyHtml += '<td>' + formatBulanCell(cDitolak, 'text-danger fw-bold') + '</td>';
+    tbodyHtml += '<td>' + formatBulanCell(cSisulka, 'fw-bold', 'color:#8b5cf6;') + '</td>';
+    tbodyHtml += '<td class="fw-bold text-primary bg-light">' + (cTotal > 0 ? cTotal.toLocaleString('id-ID') : '-') + '</td>';
+    tbodyHtml += '</tr>';
+  }
+
+  tbody.innerHTML = tbodyHtml;
+
+  currentBulanTotals = {
+    approve: sumApprove,
+    revisiDikirim: sumRevisiDikirim,
+    revisi: sumRevisi,
+    belumDicek: sumBelumDicek,
+    ditolak: sumDitolak,
+    sisulka: sumSisulka,
+    total: sumTotal
+  };
+
+  var tfootHtml = '<tr>';
+  tfootHtml += '<td class="text-start freeze-col">Total Ajuan</td>';
+  tfootHtml += '<td class="text-success">' + formatBulanCell(sumApprove) + '</td>';
+  tfootHtml += '<td class="text-info-emphasis">' + formatBulanCell(sumRevisiDikirim) + '</td>';
+  tfootHtml += '<td class="text-warning-emphasis">' + formatBulanCell(sumRevisi) + '</td>';
+  tfootHtml += '<td class="text-secondary">' + formatBulanCell(sumBelumDicek) + '</td>';
+  tfootHtml += '<td class="text-danger">' + formatBulanCell(sumDitolak) + '</td>';
+  tfootHtml += '<td style="color:#8b5cf6;">' + formatBulanCell(sumSisulka) + '</td>';
+  tfootHtml += '<td class="text-primary">' + (sumTotal > 0 ? sumTotal.toLocaleString('id-ID') : '-') + '</td>';
+  tfootHtml += '</tr>';
+  tfoot.innerHTML = tfootHtml;
+}
+
+// Handler Toggle Tampilan: Grafik / Tabel
+function switchBulanView(view) {
+  currentBulanView = view;
+  var btnChart = document.getElementById('btnToggleChartBulan');
+  var btnTable = document.getElementById('btnToggleTableBulan');
+  var containerChart = document.getElementById('containerChartBulan');
+  var containerTable = document.getElementById('containerTableBulan');
+  var iconTitle = document.getElementById('iconTitleBulan');
+  var textTitle = document.getElementById('textTitleBulan');
+
+  if (view === 'table') {
+    if (containerChart) containerChart.style.display = 'none';
+    if (containerTable) containerTable.style.display = 'block';
+
+    if (btnChart) {
+      btnChart.className = 'btn btn-outline-primary fw-semibold';
+    }
+    if (btnTable) {
+      btnTable.className = 'btn btn-primary active fw-semibold';
+    }
+    if (iconTitle) {
+      iconTitle.className = 'bi bi-table text-primary fs-5';
+    }
+    if (textTitle) {
+      textTitle.innerText = 'Rincian Ajuan per Bulan (Tabel)';
+    }
+
+    renderTableBulan(lastFilteredRecords, lastSelectedBulan);
+  } else {
+    if (containerTable) containerTable.style.display = 'none';
+    if (containerChart) containerChart.style.display = 'block';
+
+    if (btnTable) {
+      btnTable.className = 'btn btn-outline-primary fw-semibold';
+    }
+    if (btnChart) {
+      btnChart.className = 'btn btn-primary active fw-semibold';
+    }
+    if (iconTitle) {
+      iconTitle.className = 'bi bi-bar-chart-fill text-primary fs-5';
+    }
+    if (textTitle) {
+      textTitle.innerText = 'Jumlah Ajuan per Bulan';
+    }
+
+    if (chartStatusBarisPenuhInstance) {
+      chartStatusBarisPenuhInstance.resize();
+    }
+  }
+}
+
+// 2c. Ekspor Excel untuk Card Jumlah Ajuan per Bulan (2 Sheet: Tabel & Grafik Gambar)
+function exportBulanXLSX() {
+  if (!currentBulanRows || currentBulanRows.length === 0) {
+    alert('Tidak ada data ajuan per bulan untuk diekspor!');
+    return;
+  }
+
+  var selTahun = document.getElementById('selectTahun').value || 'Semua Tahun';
+  var selBulan = document.getElementById('selectBulan').value || 'Semua Bulan';
+  var selJenjang = document.getElementById('selectJenjang').value || 'Semua Jenjang';
+  var selKec = document.getElementById('selectKecamatan').value || 'Semua Kecamatan';
+  var selJenis = (document.getElementById('selectJenisKP') && document.getElementById('selectJenisKP').value) ? document.getElementById('selectJenisKP').value : 'Semua Jenis';
+  var cleanTahun = String(selTahun).replace(/\s+/g, '_');
+  var cleanBulan = String(selBulan).replace(/\s+/g, '_');
+  var fileName = 'Ajuan_Bulanan_KP_' + cleanBulan + '_' + cleanTahun + '.xlsx';
+
+  // Ambil gambar snapshot dari canvas grafik dengan latar putih solid
+  var chartImgBase64 = null;
+  try {
+    var originalCanvas = document.getElementById('chartStatusBarisPenuh');
+    if (originalCanvas && originalCanvas.width > 0 && originalCanvas.height > 0) {
+      var offscreen = document.createElement('canvas');
+      offscreen.width = originalCanvas.width;
+      offscreen.height = originalCanvas.height;
+      var octx = offscreen.getContext('2d');
+      // Beri background putih agar saat diekspor ke Excel tidak transparan
+      octx.fillStyle = '#ffffff';
+      octx.fillRect(0, 0, offscreen.width, offscreen.height);
+      octx.drawImage(originalCanvas, 0, 0);
+      chartImgBase64 = offscreen.toDataURL('image/png', 1.0);
+    }
+  } catch (err) {
+    console.warn('Tidak dapat mengambil gambar grafik:', err);
+  }
+
+  // Jika ExcelJS tersedia, gunakan ExcelJS untuk menyematkan gambar grafik ke Sheet 2
+  if (typeof ExcelJS !== 'undefined') {
+    showLoading(true);
+    try {
+      var workbook = new ExcelJS.Workbook();
+      workbook.creator = 'Disdikbud Kab. Magelang';
+      workbook.created = new Date();
+
+      // ==========================================
+      // SHEET 1: TABEL
+      // ==========================================
+      var wsTabel = workbook.addWorksheet('Tabel', {
+        views: [{ showGridLines: true }]
+      });
+
+      wsTabel.columns = [
+        { width: 22 }, // A: Bulan
+        { width: 14 }, // B: Approve
+        { width: 16 }, // C: Revisi Dikirim
+        { width: 14 }, // D: Revisi
+        { width: 15 }, // E: Belum Dicek
+        { width: 14 }, // F: Ditolak
+        { width: 14 }, // G: Sisulka
+        { width: 16 }  // H: Total
+      ];
+
+      // Judul Laporan
+      wsTabel.addRow(['REKAPITULASI AJUAN IJIN PENGGUNAAN GELAR AKADEMIK PNS PER BULAN']);
+      wsTabel.addRow(['Dinas Pendidikan dan Kebudayaan Kabupaten Magelang']);
+      wsTabel.addRow(['Filter: Periode ' + selBulan + ' ' + selTahun + ' | Jenjang: ' + selJenjang + ' | Jenis IPGA: ' + selJenis + ' | Wilayah: ' + selKec]);
+      wsTabel.addRow([]); // baris 4 kosong
+
+      // Format Judul
+      wsTabel.getCell('A1').font = { bold: true, size: 14, color: { argb: 'FF1E3A8A' } };
+      wsTabel.getCell('A2').font = { bold: true, size: 11, color: { argb: 'FF475569' } };
+      wsTabel.getCell('A3').font = { italic: true, size: 9, color: { argb: 'FF64748B' } };
+      wsTabel.mergeCells('A1:H1');
+      wsTabel.mergeCells('A2:H2');
+      wsTabel.mergeCells('A3:H3');
+
+      // Header Baris 5 & 6 (2-Tier Header)
+      wsTabel.addRow(['Bulan Ajuan', 'Status Ajuan', '', '', '', '', '', 'Total Ajuan']);
+      wsTabel.addRow(['', 'Approve', 'Revisi Dikirim', 'Revisi', 'Belum Dicek', 'Ditolak', 'Sisulka', '']);
+
+      wsTabel.mergeCells('A5:A6');
+      wsTabel.mergeCells('B5:G5');
+      wsTabel.mergeCells('H5:H6');
+
+      // Styling Header
+      ['A5', 'H5', 'B5'].forEach(function(pos) {
+        var c = wsTabel.getCell(pos);
+        c.font = { bold: true, size: 10, color: { argb: 'FF1E293B' } };
+        c.alignment = { vertical: 'middle', horizontal: 'center' };
+        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF1F5F9' } };
+      });
+      wsTabel.getCell('A5').alignment = { vertical: 'middle', horizontal: 'left' };
+
+      for (var colIdx = 1; colIdx <= 8; colIdx++) {
+        var cellCol = wsTabel.getRow(6).getCell(colIdx);
+        cellCol.font = { bold: true, size: 9 };
+        cellCol.alignment = { vertical: 'middle', horizontal: 'center' };
+        cellCol.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8FAFC' } };
+      }
+
+      // Isi Data Baris
+      for (var r = 0; r < currentBulanRows.length; r++) {
+        var br = currentBulanRows[r];
+        var row = wsTabel.addRow([
+          br.bulan,
+          br.approve || 0,
+          br.revisiDikirim || 0,
+          br.revisi || 0,
+          br.belumDicek || 0,
+          br.ditolak || 0,
+          br.sisulka || 0,
+          br.total || 0
+        ]);
+        row.getCell(1).alignment = { vertical: 'middle', horizontal: 'left' };
+        for (var c = 2; c <= 8; c++) {
+          row.getCell(c).alignment = { vertical: 'middle', horizontal: 'center' };
+        }
+      }
+
+      // Baris Total Kumulatif
+      if (currentBulanTotals) {
+        var tRow = wsTabel.addRow([
+          'Total Ajuan',
+          currentBulanTotals.approve || 0,
+          currentBulanTotals.revisiDikirim || 0,
+          currentBulanTotals.revisi || 0,
+          currentBulanTotals.belumDicek || 0,
+          currentBulanTotals.ditolak || 0,
+          currentBulanTotals.sisulka || 0,
+          currentBulanTotals.total || 0
+        ]);
+        tRow.font = { bold: true, size: 10 };
+        for (var tc = 1; tc <= 8; tc++) {
+          var tCell = tRow.getCell(tc);
+          tCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE2E8F0' } };
+          tCell.alignment = { vertical: 'middle', horizontal: (tc === 1 ? 'left' : 'center') };
+        }
+      }
+
+      // Border Grid Tabel
+      var totalRowsCount = wsTabel.rowCount;
+      for (var rx = 5; rx <= totalRowsCount; rx++) {
+        for (var cx = 1; cx <= 8; cx++) {
+          wsTabel.getRow(rx).getCell(cx).border = {
+            top: { style: 'thin', color: { argb: 'FFCBD5E1' } },
+            left: { style: 'thin', color: { argb: 'FFCBD5E1' } },
+            bottom: { style: 'thin', color: { argb: 'FFCBD5E1' } },
+            right: { style: 'thin', color: { argb: 'FFCBD5E1' } }
+          };
+        }
+      }
+
+      // ==========================================
+      // SHEET 2: GRAFIK (Gambar Grafik Disematkan)
+      // ==========================================
+      var wsGrafik = workbook.addWorksheet('Grafik', {
+        views: [{ showGridLines: true }]
+      });
+
+      wsGrafik.columns = [
+        { width: 20 },
+        { width: 14 },
+        { width: 14 },
+        { width: 14 },
+        { width: 14 },
+        { width: 14 },
+        { width: 14 },
+        { width: 16 }
+      ];
+
+      // Judul Laporan di Sheet Grafik
+      wsGrafik.addRow(['GRAFIK JUMLAH AJUAN IJIN PENGGUNAAN GELAR AKADEMIK PNS PER BULAN']);
+      wsGrafik.addRow(['Dinas Pendidikan dan Kebudayaan Kabupaten Magelang']);
+      wsGrafik.addRow(['Periode: ' + selBulan + ' ' + selTahun + ' | Filter: Jenjang ' + selJenjang + ', Wilayah ' + selKec]);
+      wsGrafik.addRow([]); // baris 4 kosong
+
+      wsGrafik.getCell('A1').font = { bold: true, size: 14, color: { argb: 'FF1E3A8A' } };
+      wsGrafik.getCell('A2').font = { bold: true, size: 11, color: { argb: 'FF475569' } };
+      wsGrafik.getCell('A3').font = { italic: true, size: 9, color: { argb: 'FF64748B' } };
+      wsGrafik.mergeCells('A1:H1');
+      wsGrafik.mergeCells('A2:H2');
+      wsGrafik.mergeCells('A3:H3');
+
+      // Sisipkan Gambar Grafik jika berhasil di-capture
+      if (chartImgBase64) {
+        var imageId = workbook.addImage({
+          base64: chartImgBase64,
+          extension: 'png'
+        });
+
+        // Sematkan gambar grafik di sel A5 sampai H25 (lebar dan tinggi proporsional)
+        wsGrafik.addImage(imageId, {
+          tl: { col: 0, row: 4.5 },
+          br: { col: 8, row: 24.5 },
+          editAs: 'oneCell'
+        });
+      } else {
+        wsGrafik.addRow(['(Grafik visual sedang dimuat di layar dashboard)']);
+      }
+
+      // Simpan dan unduh file Excel
+      workbook.xlsx.writeBuffer().then(function(buffer) {
+        showLoading(false);
+        var blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }).catch(function(errWrite) {
+        showLoading(false);
+        console.error('Gagal menulis file ExcelJS:', errWrite);
+        alert('Gagal membuat file Excel: ' + errWrite.message);
+      });
+
+      return;
+    } catch (e) {
+      showLoading(false);
+      console.warn('Gagal render via ExcelJS, fallback ke SheetJS:', e);
+    }
+  }
+
+  // Fallback standar SheetJS jika ExcelJS belum terload
+  var wbSheetJS = XLSX.utils.book_new();
+  var aoaTabel = [
+    ['REKAPITULASI AJUAN IJIN PENGGUNAAN GELAR AKADEMIK PNS PER BULAN'],
+    ['Dinas Pendidikan dan Kebudayaan Kabupaten Magelang'],
+    ['Filter: Periode ' + selBulan + ' ' + selTahun + ' | Jenjang: ' + selJenjang + ' | Wilayah: ' + selKec],
+    [],
+    ['Bulan Ajuan', 'Approve', 'Revisi Dikirim', 'Revisi', 'Belum Dicek', 'Ditolak', 'Sisulka', 'Total Ajuan']
+  ];
+  for (var k = 0; k < currentBulanRows.length; k++) {
+    var item = currentBulanRows[k];
+    aoaTabel.push([item.bulan, item.approve, item.revisiDikirim, item.revisi, item.belumDicek, item.ditolak, item.sisulka, item.total]);
+  }
+  var wsF = XLSX.utils.aoa_to_sheet(aoaTabel);
+  XLSX.utils.book_append_sheet(wbSheetJS, wsF, 'Tabel');
+  XLSX.writeFile(wbSheetJS, fileName);
+}
+
+// 3. Grafik Ajuan Ijin Penggunaan Gelar Akademik (Golongan) - Identik dengan Grafik Jumlah Usulan per Bulan
+function renderChartGolongan(records) {
+  var ctx = document.getElementById('chartGolongan').getContext('2d');
+
+  // Urutan standar golongan PNS dari I/b sampai IV/d
+  var daftarGolonganUrut = [
+    'I/b', 'I/c', 'I/d',
+    'II/a', 'II/b', 'II/c', 'II/d',
+    'III/a', 'III/b', 'III/c', 'III/d',
+    'IV/a', 'IV/b', 'IV/c', 'IV/d'
+  ];
+
+  // Inisialisasi map per golongan sesuai urutan standar
+  var mapApprove = {};
+  var mapRevisiDikirim = {};
+  var mapRevisi = {};
+  var mapBelumDicek = {};
+  var mapDitolak = {};
+  var mapSisulka = {};
+  var totalPerGol = {};
+
+  for (var g = 0; g < daftarGolonganUrut.length; g++) {
+    var code = daftarGolonganUrut[g];
+    totalPerGol[code] = 0;
+    mapApprove[code] = 0;
+    mapRevisiDikirim[code] = 0;
+    mapRevisi[code] = 0;
+    mapBelumDicek[code] = 0;
+    mapDitolak[code] = 0;
+    mapSisulka[code] = 0;
+  }
+
+  // Helper untuk mengekstrak kode golongan (misal: "Penata, III/c" -> "III/c", "III/C" -> "III/c", "IV/a" -> "IV/a")
+  var extractGolonganCode = function(str) {
+    if (!str) return '';
+    var match = str.match(/\b(I{1,3}|IV)\s*[\/\-]?\s*([a-d])\b/i);
+    if (match) {
+      return match[1].toUpperCase() + '/' + match[2].toLowerCase();
+    }
+    return '';
+  };
+
+  for (var i = 0; i < records.length; i++) {
+    var r = records[i];
+    var rawPangkat = (r.ajuan_pangkat || '').trim();
+    var golCode = extractGolonganCode(rawPangkat);
+
+    // Jika tidak cocok dengan pola standar, coba cari substring langsung dari daftarGolonganUrut
+    if (!golCode) {
+      var lowStr = rawPangkat.toLowerCase();
+      for (var d = 0; d < daftarGolonganUrut.length; d++) {
+        var gItem = daftarGolonganUrut[d];
+        if (lowStr.indexOf(gItem.toLowerCase()) !== -1) {
+          golCode = gItem;
+          break;
+        }
+      }
+    }
+
+    if (!golCode || !totalPerGol.hasOwnProperty(golCode)) {
+      continue;
+    }
+
+    totalPerGol[golCode]++;
+    var st = (r.status_ae || r.status || '').trim();
+    if (st === 'Approve') {
+      mapApprove[golCode]++;
+    } else if (st === 'Revisi Dikirim') {
+      mapRevisiDikirim[golCode]++;
+    } else if (st === 'Revisi') {
+      mapRevisi[golCode]++;
+    } else if (st === 'Belum Dicek') {
+      mapBelumDicek[golCode]++;
+    } else if (st === 'Ditolak') {
+      mapDitolak[golCode]++;
+    } else if (st === 'Sisulka') {
+      mapSisulka[golCode]++;
+    } else {
+      mapBelumDicek[golCode]++;
+    }
+  }
+
+  var dataApprove = [];
+  var dataRevisiDikirim = [];
+  var dataRevisi = [];
+  var dataBelumDicek = [];
+  var dataDitolak = [];
+  var dataSisulka = [];
+  var displayLabels = [];
+
+  // Tampilkan seluruh golongan dari I/b sampai IV/d secara urut
+  for (var k = 0; k < daftarGolonganUrut.length; k++) {
+    var gKey = daftarGolonganUrut[k];
+    dataApprove.push(mapApprove[gKey] || 0);
+    dataRevisiDikirim.push(mapRevisiDikirim[gKey] || 0);
+    dataRevisi.push(mapRevisi[gKey] || 0);
+    dataBelumDicek.push(mapBelumDicek[gKey] || 0);
+    dataDitolak.push(mapDitolak[gKey] || 0);
+    dataSisulka.push(mapSisulka[gKey] || 0);
+
+    // Multi-line label: Baris 1 nama golongan singkat (cth: III/c), Baris 2 total usulan (cth: (45))
+    displayLabels.push([gKey, '(' + (totalPerGol[gKey] || 0) + ')']);
+  }
+
+  // Plugin Chart.js kustom: Angka di atas batang bernilai (> 0)
+  var barValueLabelsGolonganPlugin = {
+    id: 'barValueLabelsGolongan',
+    afterDatasetsDraw: function(chart) {
+      try {
+        var chartCtx = chart.ctx;
+        chart.data.datasets.forEach(function(dataset, datasetIndex) {
+          var meta = chart.getDatasetMeta(datasetIndex);
+          if (meta.hidden) return;
+
+          meta.data.forEach(function(bar, index) {
+            var val = dataset.data[index];
+            if (val > 0 && bar && typeof bar.x === 'number' && typeof bar.y === 'number') {
+              chartCtx.save();
+              chartCtx.font = 'bold 11px "Plus Jakarta Sans", sans-serif';
+              chartCtx.fillStyle = '#334155';
+              chartCtx.textAlign = 'center';
+              chartCtx.textBaseline = 'bottom';
+              chartCtx.fillText(val, bar.x, bar.y - 3);
+              chartCtx.restore();
+            }
+          });
+        });
+      } catch (err) {
+        console.warn('Gagal render barValueLabelsGolongan:', err);
+      }
+    }
+  };
+
+  if (chartGolonganInstance) chartGolonganInstance.destroy();
+
+  chartGolonganInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: displayLabels,
+      datasets: [
+        {
+          label: 'Approve',
+          data: dataApprove,
+          backgroundColor: '#10b981',
+          borderRadius: 4
+        },
+        {
+          label: 'Revisi Dikirim',
+          data: dataRevisiDikirim,
+          backgroundColor: '#0ea5e9',
+          borderRadius: 4
+        },
+        {
+          label: 'Revisi',
+          data: dataRevisi,
+          backgroundColor: '#f59e0b',
+          borderRadius: 4
+        },
+        {
+          label: 'Belum Dicek',
+          data: dataBelumDicek,
+          backgroundColor: '#64748b',
+          borderRadius: 4
+        },
+        {
+          label: 'Ditolak',
+          data: dataDitolak,
+          backgroundColor: '#ef4444',
+          borderRadius: 4
+        },
+        {
+          label: 'Sisulka',
+          data: dataSisulka,
+          backgroundColor: '#8b5cf6',
+          borderRadius: 4
+        }
+      ]
+    },
+    plugins: [barValueLabelsGolonganPlugin],
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      maxBarThickness: 45,
+      barPercentage: 0.9,
+      categoryPercentage: 0.88,
+      layout: {
+        padding: {
+          top: 25
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: {
+            boxWidth: 12,
+            usePointStyle: true,
+            padding: 15
+          }
+        },
+        tooltip: {
+          callbacks: {
+            title: function(tooltipItems) {
+              if (!tooltipItems || tooltipItems.length === 0) return '';
+              var item = tooltipItems[0];
+              var label = item.chart.data.labels[item.dataIndex];
+              return Array.isArray(label) ? label[0] : label;
+            },
+            label: function(context) {
+              return ' ' + context.dataset.label + ': ' + context.raw + ' ajuan';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          stacked: false,
+          grid: {
+            display: true,
+            drawOnChartArea: true,
+            drawTicks: true,
+            color: 'rgba(148, 163, 184, 0.35)',
+            lineWidth: 1.2
+          },
+          ticks: {
+            font: {
+              family: "'Plus Jakarta Sans', sans-serif",
+              size: 11,
+              weight: '600'
+            },
+            color: '#475569',
+            maxRotation: 0,
+            minRotation: 0
+          }
+        },
+        y: {
+          stacked: false,
+          beginAtZero: true,
+          suggestedMax: function() {
+            var allVals = [].concat(dataApprove, dataRevisiDikirim, dataRevisi, dataBelumDicek, dataDitolak, dataSisulka);
+            var maxVal = Math.max.apply(null, allVals);
+            return maxVal > 0 ? maxVal + 1 : 5;
+          }(),
+          ticks: { precision: 0 },
+          grid: {
+            color: 'rgba(226, 232, 240, 0.7)'
+          }
+        }
+      }
+    }
+  });
+}
+
+// 3b. Render Tabel Rincian Distribusi Golongan
+function renderTableGolongan(records) {
+  var tbody = document.getElementById('golonganTableBody');
+  var tfoot = document.getElementById('golonganTableFoot');
+  if (!tbody || !tfoot) return;
+
+  var daftarGolonganUrut = [
+    'I/b', 'I/c', 'I/d',
+    'II/a', 'II/b', 'II/c', 'II/d',
+    'III/a', 'III/b', 'III/c', 'III/d',
+    'IV/a', 'IV/b', 'IV/c', 'IV/d'
+  ];
+
+  var mapApprove = {};
+  var mapRevisiDikirim = {};
+  var mapRevisi = {};
+  var mapBelumDicek = {};
+  var mapDitolak = {};
+  var mapSisulka = {};
+  var totalPerGol = {};
+
+  for (var g = 0; g < daftarGolonganUrut.length; g++) {
+    var code = daftarGolonganUrut[g];
+    totalPerGol[code] = 0;
+    mapApprove[code] = 0;
+    mapRevisiDikirim[code] = 0;
+    mapRevisi[code] = 0;
+    mapBelumDicek[code] = 0;
+    mapDitolak[code] = 0;
+    mapSisulka[code] = 0;
+  }
+
+  var extractGolonganCode = function(str) {
+    if (!str) return '';
+    var match = str.match(/\b(I{1,3}|IV)\s*[\/\-]?\s*([a-d])\b/i);
+    if (match) {
+      return match[1].toUpperCase() + '/' + match[2].toLowerCase();
+    }
+    return '';
+  };
+
+  for (var i = 0; i < records.length; i++) {
+    var r = records[i];
+    var rawPangkat = (r.ajuan_pangkat || '').trim();
+    var golCode = extractGolonganCode(rawPangkat);
+
+    if (!golCode) {
+      var lowStr = rawPangkat.toLowerCase();
+      for (var d = 0; d < daftarGolonganUrut.length; d++) {
+        var gItem = daftarGolonganUrut[d];
+        if (lowStr.indexOf(gItem.toLowerCase()) !== -1) {
+          golCode = gItem;
+          break;
+        }
+      }
+    }
+
+    if (!golCode || !totalPerGol.hasOwnProperty(golCode)) {
+      continue;
+    }
+
+    totalPerGol[golCode]++;
+    var st = (r.status_ae || r.status || '').trim();
+    if (st === 'Approve') {
+      mapApprove[golCode]++;
+    } else if (st === 'Revisi Dikirim') {
+      mapRevisiDikirim[golCode]++;
+    } else if (st === 'Revisi') {
+      mapRevisi[golCode]++;
+    } else if (st === 'Belum Dicek') {
+      mapBelumDicek[golCode]++;
+    } else if (st === 'Ditolak') {
+      mapDitolak[golCode]++;
+    } else if (st === 'Sisulka') {
+      mapSisulka[golCode]++;
+    } else {
+      mapBelumDicek[golCode]++;
+    }
+  }
+
+  var formatGolCell = function(val, extraClass, extraStyle) {
+    if (!val || val === 0) {
+      return '<span class="text-muted opacity-50">-</span>';
+    }
+    var cls = extraClass ? ' class="' + extraClass + '"' : '';
+    var stl = extraStyle ? ' style="' + extraStyle + '"' : '';
+    return '<span' + cls + stl + '>' + val.toLocaleString('id-ID') + '</span>';
+  };
+
+  var tbodyHtml = '';
+  var sumApprove = 0, sumRevisiDikirim = 0, sumRevisi = 0;
+  var sumBelumDicek = 0, sumDitolak = 0, sumSisulka = 0, sumTotal = 0;
+
+  currentGolonganRows = [];
+  for (var k = 0; k < daftarGolonganUrut.length; k++) {
+    var gKey = daftarGolonganUrut[k];
+    var cApprove = mapApprove[gKey] || 0;
+    var cRevisiDikirim = mapRevisiDikirim[gKey] || 0;
+    var cRevisi = mapRevisi[gKey] || 0;
+    var cBelumDicek = mapBelumDicek[gKey] || 0;
+    var cDitolak = mapDitolak[gKey] || 0;
+    var cSisulka = mapSisulka[gKey] || 0;
+    var cTotal = cApprove + cRevisiDikirim + cRevisi + cBelumDicek + cDitolak + cSisulka;
+
+    sumApprove += cApprove;
+    sumRevisiDikirim += cRevisiDikirim;
+    sumRevisi += cRevisi;
+    sumBelumDicek += cBelumDicek;
+    sumDitolak += cDitolak;
+    sumSisulka += cSisulka;
+    sumTotal += cTotal;
+
+    currentGolonganRows.push({
+      golongan: gKey,
+      approve: cApprove,
+      revisiDikirim: cRevisiDikirim,
+      revisi: cRevisi,
+      belumDicek: cBelumDicek,
+      ditolak: cDitolak,
+      sisulka: cSisulka,
+      total: cTotal
+    });
+
+    tbodyHtml += '<tr>';
+    tbodyHtml += '<td class="text-start fw-semibold freeze-col"><i class="bi bi-award text-secondary me-1"></i>' + escapeHtml(gKey) + '</td>';
+    tbodyHtml += '<td>' + formatGolCell(cApprove, 'text-success fw-bold') + '</td>';
+    tbodyHtml += '<td>' + formatGolCell(cRevisiDikirim, 'text-info-emphasis fw-semibold') + '</td>';
+    tbodyHtml += '<td>' + formatGolCell(cRevisi, 'text-warning-emphasis fw-bold') + '</td>';
+    tbodyHtml += '<td>' + formatGolCell(cBelumDicek, 'text-secondary') + '</td>';
+    tbodyHtml += '<td>' + formatGolCell(cDitolak, 'text-danger fw-bold') + '</td>';
+    tbodyHtml += '<td>' + formatGolCell(cSisulka, 'fw-bold', 'color:#8b5cf6;') + '</td>';
+    tbodyHtml += '<td class="fw-bold text-primary bg-light">' + (cTotal > 0 ? cTotal.toLocaleString('id-ID') : '-') + '</td>';
+    tbodyHtml += '</tr>';
+  }
+
+  tbody.innerHTML = tbodyHtml;
+
+  currentGolonganTotals = {
+    approve: sumApprove,
+    revisiDikirim: sumRevisiDikirim,
+    revisi: sumRevisi,
+    belumDicek: sumBelumDicek,
+    ditolak: sumDitolak,
+    sisulka: sumSisulka,
+    total: sumTotal
+  };
+
+  var tfootHtml = '<tr>';
+  tfootHtml += '<td class="text-start freeze-col">Total Ajuan</td>';
+  tfootHtml += '<td class="text-success">' + formatGolCell(sumApprove) + '</td>';
+  tfootHtml += '<td class="text-info-emphasis">' + formatGolCell(sumRevisiDikirim) + '</td>';
+  tfootHtml += '<td class="text-warning-emphasis">' + formatGolCell(sumRevisi) + '</td>';
+  tfootHtml += '<td class="text-secondary">' + formatGolCell(sumBelumDicek) + '</td>';
+  tfootHtml += '<td class="text-danger">' + formatGolCell(sumDitolak) + '</td>';
+  tfootHtml += '<td style="color:#8b5cf6;">' + formatGolCell(sumSisulka) + '</td>';
+  tfootHtml += '<td class="text-primary">' + (sumTotal > 0 ? sumTotal.toLocaleString('id-ID') : '-') + '</td>';
+  tfootHtml += '</tr>';
+  tfoot.innerHTML = tfootHtml;
+}
+
+// Handler Toggle Tampilan: Grafik / Tabel Golongan
+function switchGolonganView(view) {
+  currentGolonganView = view;
+  var btnChart = document.getElementById('btnToggleChartGolongan');
+  var btnTable = document.getElementById('btnToggleTableGolongan');
+  var containerChart = document.getElementById('containerChartGolongan');
+  var containerTable = document.getElementById('containerTableGolongan');
+  var iconTitle = document.getElementById('iconTitleGolongan');
+  var textTitle = document.getElementById('textTitleGolongan');
+
+  if (view === 'table') {
+    if (containerChart) containerChart.style.display = 'none';
+    if (containerTable) containerTable.style.display = 'block';
+
+    if (btnChart) {
+      btnChart.className = 'btn btn-outline-primary fw-semibold';
+    }
+    if (btnTable) {
+      btnTable.className = 'btn btn-primary active fw-semibold';
+    }
+    if (iconTitle) {
+      iconTitle.className = 'bi bi-table text-primary fs-5';
+    }
+    if (textTitle) {
+      textTitle.innerText = 'Rincian Ajuan per Golongan (Tabel)';
+    }
+
+    renderTableGolongan(lastFilteredRecords);
+  } else {
+    if (containerTable) containerTable.style.display = 'none';
+    if (containerChart) containerChart.style.display = 'block';
+
+    if (btnTable) {
+      btnTable.className = 'btn btn-outline-primary fw-semibold';
+    }
+    if (btnChart) {
+      btnChart.className = 'btn btn-primary active fw-semibold';
+    }
+    if (iconTitle) {
+      iconTitle.className = 'bi bi-award text-primary fs-5';
+    }
+    if (textTitle) {
+      textTitle.innerText = 'Distribusi Ajuan Ijin Penggunaan Gelar Akademik (Golongan yang Diajukan)';
+    }
+
+    if (chartGolonganInstance) {
+      chartGolonganInstance.resize();
+    }
+  }
+}
+
+// 3c. Ekspor Excel untuk Card Distribusi Golongan (2 Sheet: Tabel & Grafik Gambar)
+function exportGolonganXLSX() {
+  if (!currentGolonganRows || currentGolonganRows.length === 0) {
+    alert('Tidak ada data distribusi golongan untuk diekspor!');
+    return;
+  }
+
+  showLoading(true);
+
+  var selBulan = document.getElementById('selectBulan').value || 'Semua Bulan';
+  var selTahun = document.getElementById('selectTahun').value || '2026';
+  var selJenjang = document.getElementById('selectJenjang').value || 'Semua Jenjang';
+  var selKec = document.getElementById('selectKecamatan').value || 'Semua Kecamatan';
+  var cleanBulan = selBulan.replace(/[^a-zA-Z0-9]/g, '_');
+  var fileName = 'Distribusi_Golongan_KP_' + cleanBulan + '_' + selTahun + '.xlsx';
+
+  // Snapshot gambar grafik dari canvas chartGolongan
+  var chartImgBase64 = null;
+  try {
+    var chartCanvas = document.getElementById('chartGolongan');
+    if (chartCanvas && chartGolonganInstance) {
+      // Buat canvas sementara dengan background putih agar tidak transparan saat disematkan ke Excel
+      var offCanvas = document.createElement('canvas');
+      offCanvas.width = chartCanvas.width;
+      offCanvas.height = chartCanvas.height;
+      var offCtx = offCanvas.getContext('2d');
+      offCtx.fillStyle = '#ffffff';
+      offCtx.fillRect(0, 0, offCanvas.width, offCanvas.height);
+      offCtx.drawImage(chartCanvas, 0, 0);
+      chartImgBase64 = offCanvas.toDataURL('image/png');
+    }
+  } catch (errCapture) {
+    console.warn('Gagal capture gambar chartGolongan:', errCapture);
+  }
+
+  // Gunakan ExcelJS jika tersedia
+  if (typeof ExcelJS !== 'undefined') {
+    try {
+      var workbook = new ExcelJS.Workbook();
+      workbook.creator = 'Disdikbud Kab. Magelang';
+      workbook.created = new Date();
+
+      // ==========================================
+      // SHEET 1: TABEL
+      // ==========================================
+      var wsTabel = workbook.addWorksheet('Tabel', {
+        views: [{ showGridLines: true }]
+      });
+
+      // Set lebar kolom
+      wsTabel.columns = [
+        { width: 16 }, // Golongan
+        { width: 14 }, // Approve
+        { width: 15 }, // Revisi Kirim
+        { width: 13 }, // Revisi
+        { width: 14 }, // Belum Cek
+        { width: 13 }, // Ditolak
+        { width: 13 }, // Sisulka
+        { width: 16 }  // Total Ajuan
+      ];
+
+      // Header Judul Laporan
+      wsTabel.addRow(['REKAPITULASI DISTRIBUSI AJUAN IJIN PENGGUNAAN GELAR AKADEMIK PNS PER GOLONGAN']);
+      wsTabel.addRow(['Dinas Pendidikan dan Kebudayaan Kabupaten Magelang']);
+      wsTabel.addRow(['Periode: ' + selBulan + ' ' + selTahun + ' | Filter: Jenjang ' + selJenjang + ', Wilayah ' + selKec]);
+      wsTabel.addRow([]); // baris 4 kosong
+
+      wsTabel.getCell('A1').font = { bold: true, size: 14, color: { argb: 'FF1E3A8A' } };
+      wsTabel.getCell('A2').font = { bold: true, size: 11, color: { argb: 'FF475569' } };
+      wsTabel.getCell('A3').font = { italic: true, size: 9, color: { argb: 'FF64748B' } };
+      wsTabel.mergeCells('A1:H1');
+      wsTabel.mergeCells('A2:H2');
+      wsTabel.mergeCells('A3:H3');
+
+      // Header Tabel 2 Baris (Baris 5 & 6)
+      wsTabel.addRow(['Golongan', 'Status Ajuan', '', '', '', '', '', 'Total Ajuan']);
+      wsTabel.addRow(['', 'Approve', 'Revisi Kirim', 'Revisi', 'Belum Cek', 'Ditolak', 'Sisulka', '']);
+
+      wsTabel.mergeCells('A5:A6');
+      wsTabel.mergeCells('B5:G5');
+      wsTabel.mergeCells('H5:H6');
+
+      var headerFillStatus = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF1F5F9' } };
+      var headerFillTotal = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE0E7FF' } };
+
+      var styleHeaderCell = function(cell, fill, fontColor) {
+        cell.fill = fill;
+        cell.font = { bold: true, color: { argb: fontColor || 'FF1E293B' }, size: 10 };
+        cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+        cell.border = {
+          top: { style: 'thin', color: { argb: 'FF94A3B8' } },
+          left: { style: 'thin', color: { argb: 'FF94A3B8' } },
+          bottom: { style: 'thin', color: { argb: 'FF94A3B8' } },
+          right: { style: 'thin', color: { argb: 'FF94A3B8' } }
+        };
+      };
+
+      for (var rIdx = 5; rIdx <= 6; rIdx++) {
+        for (var cIdx = 1; cIdx <= 8; cIdx++) {
+          var c = wsTabel.getRow(rIdx).getCell(cIdx);
+          if (cIdx === 1) {
+            styleHeaderCell(c, headerFillStatus, 'FF1E293B');
+          } else if (cIdx === 8) {
+            styleHeaderCell(c, headerFillTotal, 'FF1D4ED8');
+          } else {
+            styleHeaderCell(c, headerFillStatus, 'FF475569');
+          }
+        }
+      }
+
+      // Isi Data Baris per Golongan
+      var dataStartRow = 7;
+      for (var idx = 0; idx < currentGolonganRows.length; idx++) {
+        var rowData = currentGolonganRows[idx];
+        var rowNum = dataStartRow + idx;
+        var rTabel = wsTabel.addRow([
+          rowData.golongan,
+          rowData.approve,
+          rowData.revisiDikirim,
+          rowData.revisi,
+          rowData.belumDicek,
+          rowData.ditolak,
+          rowData.sisulka,
+          rowData.total
+        ]);
+
+        var isEven = idx % 2 === 0;
+        var rowFill = isEven ? { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFFFF' } }
+                             : { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8FAFC' } };
+
+        for (var col = 1; col <= 8; col++) {
+          var cell = rTabel.getCell(col);
+          cell.fill = rowFill;
+          cell.border = {
+            top: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+            left: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+            bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+            right: { style: 'thin', color: { argb: 'FFE2E8F0' } }
+          };
+
+          if (col === 1) {
+            cell.alignment = { vertical: 'middle', horizontal: 'left' };
+            cell.font = { bold: true, size: 10, color: { argb: 'FF334155' } };
+          } else if (col === 8) {
+            cell.alignment = { vertical: 'middle', horizontal: 'right' };
+            cell.font = { bold: true, size: 10, color: { argb: 'FF1D4ED8' } };
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEEF2FF' } };
+            cell.numFmt = '#,##0;(#,##0);"-"';
+          } else {
+            cell.alignment = { vertical: 'middle', horizontal: 'right' };
+            cell.numFmt = '#,##0;(#,##0);"-"';
+            if (col === 2) cell.font = { bold: true, color: { argb: 'FF059669' } };
+            else if (col === 3) cell.font = { bold: true, color: { argb: 'FF0284C7' } };
+            else if (col === 4) cell.font = { bold: true, color: { argb: 'FFD97706' } };
+            else if (col === 5) cell.font = { color: { argb: 'FF64748B' } };
+            else if (col === 6) cell.font = { bold: true, color: { argb: 'FFDC2626' } };
+            else if (col === 7) cell.font = { bold: true, color: { argb: 'FF7C3AED' } };
+          }
+        }
+      }
+
+      // Baris Total Ajuan
+      var totalRowIndex = dataStartRow + currentGolonganRows.length;
+      var tot = currentGolonganTotals || {
+        approve: 0, revisiDikirim: 0, revisi: 0, belumDicek: 0, ditolak: 0, sisulka: 0, total: 0
+      };
+
+      var totalRow = wsTabel.addRow([
+        'Total Ajuan',
+        tot.approve,
+        tot.revisiDikirim,
+        tot.revisi,
+        tot.belumDicek,
+        tot.ditolak,
+        tot.sisulka,
+        tot.total
+      ]);
+
+      var tfootFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE2E8F0' } };
+      for (var colT = 1; colT <= 8; colT++) {
+        var cellT = totalRow.getCell(colT);
+        cellT.fill = tfootFill;
+        cellT.font = { bold: true, size: 10, color: { argb: colT === 8 ? 'FF1D4ED8' : 'FF0F172A' } };
+        cellT.alignment = { vertical: 'middle', horizontal: colT === 1 ? 'left' : 'right' };
+        if (colT > 1) {
+          cellT.numFmt = '#,##0;(#,##0);"-"';
+        }
+        cellT.border = {
+          top: { style: 'medium', color: { argb: 'FF64748B' } },
+          left: { style: 'thin', color: { argb: 'FF94A3B8' } },
+          bottom: { style: 'double', color: { argb: 'FF475569' } },
+          right: { style: 'thin', color: { argb: 'FF94A3B8' } }
+        };
+      }
+
+      // Catatan Footer di Sheet Tabel
+      wsTabel.addRow([]);
+      var noteRow = wsTabel.addRow(['* Laporan dihasilkan otomatis dari Dashboard Eksekutif IPGA Disdikbud Kab. Magelang pada ' + new Date().toLocaleString('id-ID')]);
+      noteRow.getCell(1).font = { italic: true, size: 8, color: { argb: 'FF94A3B8' } };
+
+      // Freeze Panes: Baris 1-6 tetap terlihat saat scroll ke bawah
+      wsTabel.views = [
+        { state: 'frozen', xSplit: 1, ySplit: 6, activeCell: 'B7', showGridLines: true }
+      ];
+
+      // Auto-fit tinggi baris
+      for (var rNum = 1; rNum <= totalRowIndex + 2; rNum++) {
+        var ro = wsTabel.getRow(rNum);
+        if (rNum === 1) ro.height = 24;
+        else if (rNum === 5 || rNum === 6) ro.height = 20;
+        else if (rNum > 6 && rNum <= totalRowIndex) ro.height = 19;
+        else if (rNum === totalRowIndex) ro.height = 22;
+
+        for (var cN = 1; cN <= 8; cN++) {
+          if (!ro.getCell(cN).border) {
+            ro.getCell(cN).border = {
+              top: { style: 'thin', color: { argb: 'FFCBD5E1' } },
+              left: { style: 'thin', color: { argb: 'FFCBD5E1' } },
+              bottom: { style: 'thin', color: { argb: 'FFCBD5E1' } },
+              right: { style: 'thin', color: { argb: 'FFCBD5E1' } }
+            };
+          }
+        }
+      }
+
+      // ==========================================
+      // SHEET 2: GRAFIK (Gambar Grafik Disematkan)
+      // ==========================================
+      var wsGrafik = workbook.addWorksheet('Grafik', {
+        views: [{ showGridLines: true }]
+      });
+
+      wsGrafik.columns = [
+        { width: 20 },
+        { width: 14 },
+        { width: 14 },
+        { width: 14 },
+        { width: 14 },
+        { width: 14 },
+        { width: 14 },
+        { width: 16 }
+      ];
+
+      // Judul Laporan di Sheet Grafik
+      wsGrafik.addRow(['GRAFIK DISTRIBUSI AJUAN IJIN PENGGUNAAN GELAR AKADEMIK PNS PER GOLONGAN']);
+      wsGrafik.addRow(['Dinas Pendidikan dan Kebudayaan Kabupaten Magelang']);
+      wsGrafik.addRow(['Periode: ' + selBulan + ' ' + selTahun + ' | Filter: Jenjang ' + selJenjang + ', Wilayah ' + selKec]);
+      wsGrafik.addRow([]); // baris 4 kosong
+
+      wsGrafik.getCell('A1').font = { bold: true, size: 14, color: { argb: 'FF1E3A8A' } };
+      wsGrafik.getCell('A2').font = { bold: true, size: 11, color: { argb: 'FF475569' } };
+      wsGrafik.getCell('A3').font = { italic: true, size: 9, color: { argb: 'FF64748B' } };
+      wsGrafik.mergeCells('A1:H1');
+      wsGrafik.mergeCells('A2:H2');
+      wsGrafik.mergeCells('A3:H3');
+
+      // Sisipkan Gambar Grafik jika berhasil di-capture
+      if (chartImgBase64) {
+        var imageId = workbook.addImage({
+          base64: chartImgBase64,
+          extension: 'png'
+        });
+
+        // Sematkan gambar grafik di sel A5 sampai H25 (lebar dan tinggi proporsional)
+        wsGrafik.addImage(imageId, {
+          tl: { col: 0, row: 4.5 },
+          br: { col: 8, row: 24.5 },
+          editAs: 'oneCell'
+        });
+      } else {
+        wsGrafik.addRow(['(Grafik visual sedang dimuat di layar dashboard)']);
+      }
+
+      // Simpan dan unduh file Excel
+      workbook.xlsx.writeBuffer().then(function(buffer) {
+        showLoading(false);
+        var blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }).catch(function(errWrite) {
+        showLoading(false);
+        console.error('Gagal menulis file ExcelJS:', errWrite);
+        alert('Gagal membuat file Excel: ' + errWrite.message);
+      });
+
+      return;
+    } catch (e) {
+      showLoading(false);
+      console.warn('Gagal render via ExcelJS, fallback ke SheetJS:', e);
+    }
+  }
+
+  // Fallback standar SheetJS jika ExcelJS belum terload
+  var wbSheetJS = XLSX.utils.book_new();
+  var aoaTabel = [
+    ['REKAPITULASI DISTRIBUSI AJUAN IJIN PENGGUNAAN GELAR AKADEMIK PNS PER GOLONGAN'],
+    ['Dinas Pendidikan dan Kebudayaan Kabupaten Magelang'],
+    ['Filter: Periode ' + selBulan + ' ' + selTahun + ' | Jenjang: ' + selJenjang + ' | Wilayah: ' + selKec],
+    [],
+    ['Golongan', 'Approve', 'Revisi Kirim', 'Revisi', 'Belum Cek', 'Ditolak', 'Sisulka', 'Total Ajuan']
+  ];
+  for (var k = 0; k < currentGolonganRows.length; k++) {
+    var item = currentGolonganRows[k];
+    aoaTabel.push([item.golongan, item.approve, item.revisiDikirim, item.revisi, item.belumDicek, item.ditolak, item.sisulka, item.total]);
+  }
+  var wsF = XLSX.utils.aoa_to_sheet(aoaTabel);
+  XLSX.utils.book_append_sheet(wbSheetJS, wsF, 'Tabel');
+  XLSX.writeFile(wbSheetJS, fileName);
+}
+
+// 4. Tabel Matriks Rekapitulasi: Kecamatan x Jenjang
+var currentMatrixRows = [];
+var currentMatrixTotals = null;
+
+function renderMatrixTable(records) {
+  var tbody = document.getElementById('matrixTableBody');
+  var tfoot = document.getElementById('matrixTableFoot');
+
+  var mapKec = {};
+
+  // Helper render angka: jika 0 tampilkan '-'
+  var formatCell = function(val, extraClass) {
+    if (!val || val === 0) {
+      return '<span class="text-muted opacity-50">-</span>';
+    }
+    var cls = extraClass ? ' class="' + extraClass + '"' : '';
+    return '<span' + cls + '>' + val.toLocaleString('id-ID') + '</span>';
+  };
+
+  for (var i = 0; i < records.length; i++) {
+    var r = records[i];
+    var kec = r.kec || 'Lainnya';
+    var jenjang = (r.jenjang || '').toUpperCase();
+
+    if (!mapKec[kec]) {
+      mapKec[kec] = {
+        tk: 0, sd: 0, smp: 0, skb: 0, korwil: 0,
+        approve: 0, revisiDikirim: 0, revisi: 0, belumDicek: 0, ditolak: 0, sisulka: 0,
+        total: 0
+      };
+    }
+
+    // Sebaran Jenjang (TK, SD, SMP, SKB, KORWIL)
+    if (jenjang.indexOf('TK') !== -1 || jenjang.indexOf('PAUD') !== -1) {
+      mapKec[kec].tk++;
+    } else if (jenjang.indexOf('SD') !== -1) {
+      mapKec[kec].sd++;
+    } else if (jenjang.indexOf('SMP') !== -1) {
+      mapKec[kec].smp++;
+    } else if (jenjang.indexOf('SKB') !== -1) {
+      mapKec[kec].skb++;
+    } else if (jenjang.indexOf('KORWIL') !== -1) {
+      mapKec[kec].korwil++;
+    } else {
+      mapKec[kec].korwil++;
+    }
+
+    mapKec[kec].total++;
+
+    // 6 Status Usulan Sesuai Kolom AE
+    var st = (r.status_ae || r.status || '').trim();
+    if (st === 'Approve') {
+      mapKec[kec].approve++;
+    } else if (st === 'Revisi Dikirim') {
+      mapKec[kec].revisiDikirim++;
+    } else if (st === 'Revisi') {
+      mapKec[kec].revisi++;
+    } else if (st === 'Belum Dicek') {
+      mapKec[kec].belumDicek++;
+    } else if (st === 'Ditolak') {
+      mapKec[kec].ditolak++;
+    } else if (st === 'Sisulka') {
+      mapKec[kec].sisulka++;
+    } else {
+      mapKec[kec].belumDicek++;
+    }
+  }
+
+  var sortedKec = Object.keys(mapKec).sort(function(a, b) {
+    return mapKec[b].total - mapKec[a].total;
+  });
+
+  currentMatrixRows = [];
+  var sumTK = 0, sumSD = 0, sumSMP = 0, sumSKB = 0, sumKORWIL = 0;
+  var sumApprove = 0, sumRevisiDikirim = 0, sumRevisi = 0, sumBelumDicek = 0, sumDitolak = 0, sumSisulka = 0;
+  var sumTotal = 0;
+
+  var tbodyHtml = '';
+  if (sortedKec.length === 0) {
+    tbodyHtml = '<tr><td colspan="13" class="text-center py-4 text-muted">Tidak ada data ajuan pada periode ini</td></tr>';
+  } else {
+    for (var k = 0; k < sortedKec.length; k++) {
+      var kName = sortedKec[k];
+      var d = mapKec[kName];
+
+      sumTK += d.tk;
+      sumSD += d.sd;
+      sumSMP += d.smp;
+      sumSKB += d.skb;
+      sumKORWIL += d.korwil;
+
+      sumApprove += d.approve;
+      sumRevisiDikirim += d.revisiDikirim;
+      sumRevisi += d.revisi;
+      sumBelumDicek += d.belumDicek;
+      sumDitolak += d.ditolak;
+      sumSisulka += d.sisulka;
+
+      sumTotal += d.total;
+
+      currentMatrixRows.push({
+        kec: kName,
+        tk: d.tk,
+        sd: d.sd,
+        smp: d.smp,
+        skb: d.skb,
+        korwil: d.korwil,
+        approve: d.approve,
+        revisiDikirim: d.revisiDikirim,
+        revisi: d.revisi,
+        belumDicek: d.belumDicek,
+        ditolak: d.ditolak,
+        sisulka: d.sisulka,
+        total: d.total
+      });
+
+      tbodyHtml += '<tr>';
+      tbodyHtml += '<td class="text-start fw-semibold freeze-col"><i class="bi bi-geo-alt text-secondary me-1"></i>' + escapeHtml(kName) + '</td>';
+      tbodyHtml += '<td>' + formatCell(d.tk) + '</td>';
+      tbodyHtml += '<td>' + formatCell(d.sd) + '</td>';
+      tbodyHtml += '<td>' + formatCell(d.smp) + '</td>';
+      tbodyHtml += '<td>' + formatCell(d.skb) + '</td>';
+      tbodyHtml += '<td>' + formatCell(d.korwil) + '</td>';
+      tbodyHtml += '<td>' + formatCell(d.approve, 'text-success fw-bold') + '</td>';
+      tbodyHtml += '<td>' + formatCell(d.revisiDikirim, 'text-info-emphasis fw-semibold') + '</td>';
+      tbodyHtml += '<td>' + formatCell(d.revisi, 'text-warning-emphasis fw-bold') + '</td>';
+      tbodyHtml += '<td>' + formatCell(d.belumDicek, 'text-secondary') + '</td>';
+      tbodyHtml += '<td>' + formatCell(d.ditolak, 'text-danger fw-bold') + '</td>';
+      tbodyHtml += '<td>' + formatCell(d.sisulka, 'fw-bold', 'color:#8b5cf6;') + '</td>';
+      tbodyHtml += '<td class="fw-bold text-primary bg-light">' + (d.total > 0 ? d.total.toLocaleString('id-ID') : '-') + '</td>';
+      tbodyHtml += '</tr>';
+    }
+  }
+  tbody.innerHTML = tbodyHtml;
+
+  // Footer Total Kabupaten
+  var tfootHtml = '<tr>';
+  tfootHtml += '<td class="text-start freeze-col">TOTAL KABUPATEN</td>';
+  tfootHtml += '<td>' + formatCell(sumTK) + '</td>';
+  tfootHtml += '<td>' + formatCell(sumSD) + '</td>';
+  tfootHtml += '<td>' + formatCell(sumSMP) + '</td>';
+  tfootHtml += '<td>' + formatCell(sumSKB) + '</td>';
+  tfootHtml += '<td>' + formatCell(sumKORWIL) + '</td>';
+  tfootHtml += '<td class="text-success">' + formatCell(sumApprove) + '</td>';
+  tfootHtml += '<td class="text-info-emphasis">' + formatCell(sumRevisiDikirim) + '</td>';
+  tfootHtml += '<td class="text-warning-emphasis">' + formatCell(sumRevisi) + '</td>';
+  tfootHtml += '<td class="text-secondary">' + formatCell(sumBelumDicek) + '</td>';
+  tfootHtml += '<td class="text-danger">' + formatCell(sumDitolak) + '</td>';
+  tfootHtml += '<td style="color:#8b5cf6;">' + formatCell(sumSisulka) + '</td>';
+  tfootHtml += '<td class="text-primary">' + (sumTotal > 0 ? sumTotal.toLocaleString('id-ID') : '-') + '</td>';
+  tfootHtml += '</tr>';
+  currentMatrixTotals = {
+    tk: sumTK, sd: sumSD, smp: sumSMP, skb: sumSKB, korwil: sumKORWIL,
+    approve: sumApprove, revisiDikirim: sumRevisiDikirim, revisi: sumRevisi,
+    belumDicek: sumBelumDicek, ditolak: sumDitolak, sisulka: sumSisulka,
+    total: sumTotal
+  };
+  tfoot.innerHTML = tfootHtml;
+}
+
+// Ekspor Tabel Matriks ke File Excel (.xlsx)
+function exportMatrixXLSX() {
+  if (!currentMatrixRows || currentMatrixRows.length === 0) {
+    alert('Tidak ada data matriks untuk diekspor!');
+    return;
+  }
+
+  if (typeof XLSX === 'undefined') {
+    alert('Library Excel (SheetJS) belum siap. Silakan muat ulang halaman.');
+    return;
+  }
+
+  var selTahun = document.getElementById('selectTahun').value || 'Semua Tahun';
+  var selBulan = document.getElementById('selectBulan').value || 'Semua Bulan';
+  var selJenjang = document.getElementById('selectJenjang').value || 'Semua Jenjang';
+  var selKec = document.getElementById('selectKecamatan').value || 'Semua Kecamatan';
+  var selJenis = (document.getElementById('selectJenisKP') && document.getElementById('selectJenisKP').value) ? document.getElementById('selectJenisKP').value : 'Semua Jenis';
+
+  // Susun data dalam bentuk array of arrays (AOA)
+  var aoa = [];
+
+  // Baris Judul Laporan
+  aoa.push(['REKAPITULASI MATRIKS AJUAN IJIN PENGGUNAAN GELAR AKADEMIK PNS']);
+  aoa.push(['Dinas Pendidikan dan Kebudayaan Kabupaten Magelang']);
+  aoa.push(['Filter: Periode ' + selBulan + ' ' + selTahun + ' | Jenjang: ' + selJenjang + ' | Jenis IPGA: ' + selJenis + ' | Wilayah: ' + selKec]);
+  aoa.push([]); // Baris kosong
+
+  // Header Baris 1 (2-Tier Header)
+  aoa.push([
+    'Kecamatan',
+    'Sebaran Jenjang', '', '', '', '',
+    'Status Ajuan', '', '', '', '', '',
+    'Total Ajuan'
+  ]);
+
+  // Header Baris 2
+  aoa.push([
+    '',
+    'TK', 'SD', 'SMP', 'SKB', 'KORWIL',
+    'Approve', 'Revisi Dikirim', 'Revisi', 'Belum Dicek', 'Ditolak', 'Sisulka',
+    ''
+  ]);
+
+  // Data Baris Kecamatan
+  for (var i = 0; i < currentMatrixRows.length; i++) {
+    var r = currentMatrixRows[i];
+    aoa.push([
+      r.kec,
+      r.tk,
+      r.sd,
+      r.smp,
+      r.skb,
+      r.korwil,
+      r.approve,
+      r.revisiDikirim,
+      r.revisi,
+      r.belumDicek,
+      r.ditolak,
+      r.sisulka,
+      r.total
+    ]);
+  }
+
+  // Baris Total Kabupaten
+  if (currentMatrixTotals) {
+    aoa.push([
+      'TOTAL KABUPATEN',
+      currentMatrixTotals.tk,
+      currentMatrixTotals.sd,
+      currentMatrixTotals.smp,
+      currentMatrixTotals.skb,
+      currentMatrixTotals.korwil,
+      currentMatrixTotals.approve,
+      currentMatrixTotals.revisiDikirim,
+      currentMatrixTotals.revisi,
+      currentMatrixTotals.belumDicek,
+      currentMatrixTotals.ditolak,
+      currentMatrixTotals.sisulka,
+      currentMatrixTotals.total
+    ]);
+  }
+
+  // Buat worksheet dari array
+  var ws = XLSX.utils.aoa_to_sheet(aoa);
+
+  // Konfigurasi Merge Cells untuk Judul dan Header 2-Tier
+  // Baris 0, 1, 2: Merge A sampai M (kolom 0 sampai 12)
+  // Baris 4 (Header 1):
+  // - Kecamatan: merge row 4 & 5 di col 0
+  // - Sebaran Jenjang: merge col 1 s.d. 5 di row 4
+  // - Status Usulan: merge col 6 s.d. 11 di row 4
+  // - Total Usulan: merge row 4 & 5 di col 12
+  ws['!merges'] = [
+    { s: { r: 0, c: 0 }, e: { r: 0, c: 12 } },
+    { s: { r: 1, c: 0 }, e: { r: 1, c: 12 } },
+    { s: { r: 2, c: 0 }, e: { r: 2, c: 12 } },
+    { s: { r: 4, c: 0 }, e: { r: 5, c: 0 } },
+    { s: { r: 4, c: 1 }, e: { r: 4, c: 5 } },
+    { s: { r: 4, c: 6 }, e: { r: 4, c: 11 } },
+    { s: { r: 4, c: 12 }, e: { r: 5, c: 12 } }
+  ];
+
+  // Atur lebar kolom yang rapi
+  ws['!cols'] = [
+    { wch: 24 }, // Kecamatan
+    { wch: 8 },  // TK
+    { wch: 8 },  // SD
+    { wch: 8 },  // SMP
+    { wch: 8 },  // SKB
+    { wch: 10 }, // KORWIL
+    { wch: 12 }, // Approve
+    { wch: 15 }, // Revisi Dikirim
+    { wch: 10 }, // Revisi
+    { wch: 13 }, // Belum Dicek
+    { wch: 10 }, // Ditolak
+    { wch: 10 }, // Sisulka
+    { wch: 14 }  // Total Usulan
+  ];
+
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Rekap Matriks');
+
+  var cleanTahun = String(selTahun).replace(/\s+/g, '_');
+  var cleanBulan = String(selBulan).replace(/\s+/g, '_');
+  var fileName = 'Rekap_Matriks_KP_' + cleanBulan + '_' + cleanTahun + '.xlsx';
+
+  XLSX.writeFile(wb, fileName);
+}
+
+function showLoading(show) {
+  var el = document.getElementById('loadingOverlay');
+  if (el) el.style.display = show ? 'flex' : 'none';
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// Dummy data untuk pengetesan
+function generateDummyExecutiveData() {
+  var sampleKec = ['Mertoyudan', 'Muntilan', 'Borobudur', 'Secang', 'Salaman', 'Grabag', 'Bandongan', 'Tempuran', 'Tegalrejo'];
+  var sampleJenjang = ['SD', 'SD', 'SMP', 'TK', 'SKB'];
+  var samplePangkat = ['Penata Muda (III/a)', 'Penata Muda Tk.I (III/b)', 'Penata (III/c)', 'Penata Tk.I (III/d)', 'Pembina (IV/a)'];
+  var sampleBulan = ['Februari', 'April', 'Juni', 'Agustus', 'Oktober', 'Desember'];
+
+  var records = [];
+  for (var i = 1; i <= 240; i++) {
+    var isRev = (i % 5 === 0);
+    var bln = sampleBulan[i % sampleBulan.length];
+    records.push({
+      id: i.toString(),
+      kec: sampleKec[i % sampleKec.length],
+      jenjang: sampleJenjang[i % sampleJenjang.length],
+      bulan_ajuan: bln,
+      tahun_ajuan: '2026',
+      status: isRev ? 'Perlu Revisi' : (i % 3 === 0 ? 'Memenuhi Syarat' : 'Dalam Proses'),
+      raw_status: isRev ? 'BTL / Perbaikan Berkas' : 'MS',
+      is_revisi: isRev,
+      ajuan_pangkat: samplePangkat[i % samplePangkat.length]
+    });
+  }
+
+  return {
+    success: true,
+    records: records,
+    filterOptions: {
+      years: ['2026', '2025'],
+      months: sampleBulan,
+      jenjang: ['TK', 'SD', 'SMP', 'SKB'],
+      kecamatan: sampleKec.slice().sort()
+    },
+    updatedAt: '09-09-2026 19.25 WIB'
+  };
+}
+  </script>
+
+</body>
+</html>
